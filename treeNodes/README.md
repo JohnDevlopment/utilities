@@ -1,6 +1,10 @@
 # treeNodes
 A Tcl extension created with the Tcl stubs library, version 8.6. It adds a new type of Tcl value I call a Node.
 
+To use this extension, simply use this command in a Tcl script: `load libtreeNodes.so`. Doing so will affect the following changes.
+
+## Contents of the extension
+
 The command defines a namespace called `TreeNodeExtension` and exports a command, `node`. The following subcommands are supported:
 
 * __node new__ _name ?parent?_
