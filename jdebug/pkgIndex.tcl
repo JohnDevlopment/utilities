@@ -1,0 +1,1 @@
+/usr/local/share/tcltk/jdebug/pkgIndex.tcl
