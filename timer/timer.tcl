@@ -1,1 +1,0 @@
-/usr/local/share/tcltk/timer/timer.tcl

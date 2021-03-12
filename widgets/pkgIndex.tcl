@@ -1,1 +1,0 @@
-/usr/local/share/tcltk/widgets/pkgIndex.tcl
