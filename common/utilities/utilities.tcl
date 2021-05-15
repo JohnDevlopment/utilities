@@ -14,15 +14,24 @@ namespace eval tcl {
     }
 }
 
-# Example:
-#   set x 0
-#   set varName x
-#   deref $varName
-proc deref {varName} {
-    upvar $varName Var
-    return $Var
+# Returns an error if EXP evaluates to false.
+# Customize the error message with MSG.
+proc assert {exp {msg ""}} {
+    if {$msg == ""} {
+        set msg "Assertion failed: $exp"
+    }
+
+    set passed [uplevel "expr $exp"]
+
+    if {! $passed} {
+        return -code 1 $msg
+    }
+
+    return
 }
 
+# Defines a readonly variable. Any subsequent attempts to
+# modify the variable result in an error.
 proc const {varName value} {
     namespace eval ::constants {namespace current}
 
@@ -47,26 +56,22 @@ proc const {varName value} {
     }}}
 }
 
-proc assert {exp {msg ""}} {
-    if {$msg == ""} {
-        set msg "Assertion failed: $exp"
-    }
-
-    set passed [uplevel "expr $exp"]
-
-    if {! $passed} {
-        return -code 1 $msg
-    }
-
-    return
+# Example:
+#   set x 0
+#   set varName x
+#   deref varName
+proc deref {varName} {
+    upvar $varName Var
+    return $Var
 }
 
+# Used to create a lambda function. Uses the same syntax as proc.
 proc lambda {args body} {
     set namespace [uplevel 1 namespace current]
     return [list ::apply [list $args $body $namespace]]
 }
 
-proc lflat {args} {
+proc lflat args {
     set lResult [list]
     foreach e $args {
         append lResult {*}$e
@@ -75,6 +80,15 @@ proc lflat {args} {
     return $lResult
 }
 
+# Postfix increment function. Returns the old value.
+proc pincr {var {i 1}} {
+    upvar $var Var
+    set temp $Var
+    incr Var $i
+    return $temp
+}
+
+# Sets a temporaru variable.
 proc settemp {sVar sValue} {
     uplevel [list set $sVar $sValue]
     uplevel [subst {
@@ -82,11 +96,4 @@ proc settemp {sVar sValue} {
     }]
 
     return
-}
-
-proc pincr {var {i 1}} {
-    upvar $var Var
-    set temp $Var
-    incr Var $i
-    return $temp
 }
