@@ -1,4 +1,37 @@
-package provide utilities 0.2
+package provide utilities 0.3
+
+namespace eval Random {
+    namespace export randi
+    namespace ensemble create -command ::random -map {int randi string randstr}
+
+    # Produce a random integer from a range.
+    proc randi args {
+        set funcname "randi_[llength $args]"
+        if {[info proc $funcname] == ""} {
+            return -code error "wrong # args: should be one of the following: random int ?min? max"
+        }
+        tailcall $funcname {*}$args
+    }
+
+    proc randi_1 max {tailcall randi_2 0 $max}
+
+    proc randi_2 {min max} {
+        return [expr "int(rand() * ($max - $min + 1) + $min)"]
+    }
+
+    # Produce a random string of characters with a specified length.
+    proc randstr len {
+        binary scan A c A
+        binary scan z c z
+        set result ""
+
+        for {set i 0} {$i < $len} {incr i} {
+            set c [binary format c [randi_2 $A $z]]
+            if {[regexp {[a-zA-Z_]} $c]} {append result $c}
+        }
+        return $result
+    }
+}
 
 namespace eval tcl {
     namespace eval mathfunc {
