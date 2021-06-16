@@ -8,4 +8,4 @@
 # script is sourced, the variable $dir must contain the
 # full path name of this file's directory.
 
-package ifneeded utilities 0.5 [list source [file join $dir utilities.tcl]]
+package ifneeded utilities 0.51 [list source [file join $dir utilities.tcl]]

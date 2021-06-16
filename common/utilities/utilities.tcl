@@ -1,4 +1,4 @@
-package provide utilities 0.5
+package provide utilities 0.51
 
 namespace eval Random {
     namespace export randi
@@ -64,30 +64,45 @@ proc assert {exp {msg ""}} {
 # Defines a readonly variable. Any subsequent attempts to
 # modify the variable result in an error.
 proc const {varName value} {
+    set constName "::constants::${varName}_original"
+
+    # Cannot redefine a constant.
+    if {[info exists $constName]} {
+        return -code error "$varName already exists"
+    }
+
+    # Parameter errors
     if {$varName == ""} {
-        error "empty var name"
+        return -code error "empty var name"
     } elseif {! [regexp "^\[a-zA-z]+\[0-9_]*" $varName]} {
-        error "invalid var name \"$varName\", must start with a letter."
+        return -code error "invalid var name \"$varName\", must start with a letter."
     }
 
     upvar $varName Var
     set Var $value
 
-    set "::constants::${varName}_original" $value
-    trace add variable Var write {apply {{name1 name2 op} {
-        if {$op == "write"} {
+    # Trace function
+    set lambda {apply {{name1 name2 op} {
+        if {$op eq "write"} {
             upvar $name1 Var
             set Var [subst "\$::constants::${name1}_original"]
-            return -code 1 "Cannot rewrite value of constant \"$name1\""
+            return -code 1 "\"$name1\" is a readonly"
+        } elseif {$op eq "unset"} {
+            unset -nocomplain "::constants::${name1}_original"
         }
         return
     }}}
+
+    set $constName $value
+    trace add variable Var write $lambda
+    trace add variable Var unset $lambda
+
+    return $value
 }
 
 # Example:
 #   set x 0
-#   set varName x
-#   deref varName
+#   deref x => returns 0
 proc deref {varName} {
     upvar $varName Var
     return $Var
