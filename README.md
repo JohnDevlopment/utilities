@@ -30,12 +30,21 @@ name of another variable. The function then returns the value of said variable. 
     deref reference
     $ result = 1
 
+**do**  
+Executes SCRIPT once; then, while COND evaluates to true, continues to execute SCRIPT.
+WORD must be "while".
+
 **lambda**  
 `lambda args body`  
 Returns a lambda expression that can be evaluated as a scripts. Here is an example:
 
     set aVar 0
     trace add variable aVar write [lambda {name1 name2 op} {return true}]
+
+**lremove**  
+`lremove listVar begin ?end?`  
+BEGIN is the first index, and the END index, if provided, specifies the last index in the range.
+If END omitted, only one element is removed.
 
 **pincr**  
 `pincr var`  
@@ -44,5 +53,6 @@ Same as `incr` but it returns the old value instead of the new value. So it is b
 postfix increment.
 
 **settemp**  
-`settemp var value`  
-Creates a temporary variable that will be deleted on an idle frame.
+`settemp var ?value?`  
+Creates a temporary variable, setting its value to VALUE.
+The variable is put on a queue, and on the next idle frame, it is unset.
