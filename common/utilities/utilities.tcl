@@ -1,4 +1,4 @@
-package provide utilities 0.51
+package provide utilities 1.0
 
 namespace eval Random {
     namespace export randi
@@ -124,28 +124,15 @@ proc do {script word cond} {
     return
 }
 
-# Returns the value of the variable VAR or DEF if it doesn't exist.
-proc get {var {def ""}} {
-    upvar $var Var
-    if {[catch {set res $Var}]} {set res $def}
-    return $res
-}
-
 # Used to create a lambda function. Uses the same syntax as proc.
 proc lambda {args body} {
     set namespace [uplevel 1 namespace current]
     return [list ::apply [list $args $body $namespace]]
 }
 
-proc lflat args {
-    set lResult [list]
-    foreach e $args {
-        append lResult {*}$e
-    }
-
-    return $lResult
-}
-
+# Removes an element-range from a list pointed to by VARNAME.
+# BEGIN is the first index, and the END index, if provided, specifies the last index in the range.
+# If END omitted, only one element is removed.
 proc lremove {varname begin {end -1}} {
     upvar $varname ListVar
 
@@ -194,14 +181,15 @@ namespace eval ::deletequeue {
 
     proc processQueue {} {
         variable vars
-        variable afterid
+        variable afterid ""
 
         foreach v $vars {unset -nocomplain $v}
-
-        set afterid ""
         set vars ""
     }
 
+    # Creates a temporary variable, setting its value to VALUE.
+    # The variable is put on a queue, and on the next idle frame, it is unset.
+    # TODO: don't allow the same variable to be queued twice.
     proc settemp {var {value ""}} {
         set frame [info frame -1]
         if {[dict get $frame type] eq "proc"} {
