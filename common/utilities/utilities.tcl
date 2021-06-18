@@ -110,7 +110,7 @@ proc deref {varName} {
 
 # Implements a do-while loop.
 # Executes SCRIPT once; then, while COND evaluates to true, continues to execute SCRIPT.
-# WORD must be equal to "while".
+# WORD must be "while".
 proc do {script word cond} {
     if {$word ne "while"} {
         return -code error "second parameter wrong: must be \"while\""
