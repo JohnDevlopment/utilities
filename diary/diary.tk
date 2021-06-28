@@ -1,0 +1,26 @@
+#!/bin/env wish
+
+package require utilities
+package require tk_widgets
+
+settemp path [file normalize $argv0]
+set path [file dirname $path]
+
+const RootDir $path
+const DateFormat "Date: %D %l:%M %p"
+
+# Window manager
+
+wm title . "Diary"
+
+# Interface is split into tabs
+
+namespace import ::exWidgets::tk_entry
+
+pack [ttk::notebook .nb] -fill both -expand 1
+
+settemp frame
+
+settemp t_srcdir [file join $RootDir src]
+source [file join $t_srcdir "write.tk"]
+source [file join $t_srcdir "file.tk"]

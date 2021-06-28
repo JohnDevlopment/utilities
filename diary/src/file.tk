@@ -1,0 +1,17 @@
+
+# Add to notebook
+.nb add [ttk::frame .nb.frFile -relief raised] -text "File Options" -sticky new
+
+ttk::button .nb.frFile.btOpenFile -text "Open File"
+ttk::button .nb.frFile.btSaveFile -text "Save File"
+
+exw entry -scrollx -maxlen 500 -clearbutton -label "Save to File" .nb.frFile.enSaveFile
+exw entry -scrollx -maxlen 500 -clearbutton -label "Open File" .nb.frFile.enOpenFile
+
+exw pack .nb.frFile.enSaveFile -fill x -side top -padx 100 -pady {0 5} -ipadx 5c
+exw pack .nb.frFile.enOpenFile -fill x -side top -padx 100 -pady {0 5}
+
+settemp t_butPlaceOpts [list -anchor nw -relx 1 -rely 0.5 -y -6 -bordermode outside]
+
+place .nb.frFile.btOpenFile -in .nb.frFile.enOpenFile {*}$t_butPlaceOpts
+place .nb.frFile.btSaveFile -in .nb.frFile.enSaveFile {*}$t_butPlaceOpts

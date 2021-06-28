@@ -1,0 +1,20 @@
+settemp t_curdate [clock seconds]
+
+# Add to notebook
+.nb add [ttk::frame .nb.frWrite] -text "Write Entry" -sticky ns
+
+ttk::frame .nb.frWrite.frTextBody
+ttk::frame .nb.frWrite.frButtons
+
+ttk::label .nb.frWrite.lbDate -text [clock format $t_curdate -format $DateFormat]
+
+text .nb.frWrite.frTextBody.txBody -background white -state disabled
+
+ttk::button .nb.frWrite.frButtons.btSave -text Save
+ttk::button .nb.frWrite.frButtons.btDelete -text Delete
+
+pack .nb.frWrite.lbDate -side top -fill x
+pack .nb.frWrite.frTextBody .nb.frWrite.frButtons -side top -fill both
+pack .nb.frWrite.frTextBody.txBody -fill both
+pack .nb.frWrite.frButtons.btSave -side left -fill x -expand 1
+pack .nb.frWrite.frButtons.btDelete -side right -fill x -expand 1
