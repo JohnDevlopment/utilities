@@ -2,16 +2,46 @@
 
 package require utilities
 package require tk_widgets
+package require json
+package require json::write
 
 settemp path [file normalize $argv0]
 set path [file dirname $path]
 
 const RootDir $path
-const DateFormat "Date: %D %l:%M %p"
+const DateFormat "%D %l:%M %p"
+
+# A dictionary with all the entries currently loaded
+set FileData {}
+
+# True if a file is being edited
+set FileLoaded 0
+
+# True if an entry is being edited
+set EditingEntry 0
+
+# Traces
+
+trace add variable FileLoaded write processFlags
+trace add variable EditingEntry write processFlags
+
+# A key representing the current entry
+set CurrentEntry 0
+trace add variable CurrentEntry write [lambda {name x y} {
+    upvar #0 $name Var
+    set state [expr {$Var > 0 ? "normal" : "disabled"}]
+    .nb.frWrite.frTextBody.txBody configure -state $state
+    if {$state eq "normal"} {focus .nb.frWrite.frTextBody.txBody}
+}]
 
 # Window manager
 
 wm title . "Diary"
+wm protocol . WM_DELETE_WINDOW {
+    finalizeWrite
+    tmpfile::closetmp
+    exit
+}
 
 # Interface is split into tabs
 
@@ -19,8 +49,9 @@ namespace import ::exWidgets::tk_entry
 
 pack [ttk::notebook .nb] -fill both -expand 1
 
-settemp frame
+settemp w
 
 settemp t_srcdir [file join $RootDir src]
-source [file join $t_srcdir "write.tk"]
-source [file join $t_srcdir "file.tk"]
+source [file join $t_srcdir write.tk]
+source [file join $t_srcdir file.tk]
+source [file join $t_srcdir proc.tcl]

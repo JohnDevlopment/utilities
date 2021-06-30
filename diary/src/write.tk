@@ -1,20 +1,55 @@
-settemp t_curdate [clock seconds]
-
 # Add to notebook
-.nb add [ttk::frame .nb.frWrite] -text "Write Entry" -sticky ns
+.nb add [ttk::frame .nb.frWrite] -text "Write Entry" -sticky new
 
 ttk::frame .nb.frWrite.frTextBody
 ttk::frame .nb.frWrite.frButtons
+bind .nb.frWrite.frButtons <Expose> {+ updateEntryButtonsStates}
 
-ttk::label .nb.frWrite.lbDate -text [clock format $t_curdate -format $DateFormat]
+ttk::label .nb.frWrite.lbDate -text ""
 
-text .nb.frWrite.frTextBody.txBody -background white -state disabled
+settemp t_frtext .nb.frWrite.frTextBody
 
-ttk::button .nb.frWrite.frButtons.btSave -text Save
+text .nb.frWrite.frTextBody.txBody -background white -state disabled -wrap word \
+    -yscrollcommand "$t_frtext.yscroll set"
+after idle {
+    settemp t_msg "This field is currently disabled. Please go to the\
+\"File Options\" tab and open or save a new file."
+    insertText .nb.frWrite.frTextBody.txBody 1.0 $t_msg
+}
+
+ttk::scrollbar .nb.frWrite.frTextBody.yscroll -orient vertical \
+    -command "$t_frtext.txBody yview"
+
+ttk::button .nb.frWrite.frButtons.btNew -text New -command {
+    settemp t_date [clock seconds]
+    set CurrentEntry $t_date
+    .nb.frWrite.lbDate configure -text [clock format $t_date -format "Date: $DateFormat"]
+    .nb.frWrite.frTextBody.txBody delete 1.0 end
+}
+ttk::button .nb.frWrite.frButtons.btSave -text Save -command {
+    if {! $CurrentEntry} {
+        displayError "Unable to save entry" "No entry is currently being edited."
+        return
+    }
+    settemp t_text [.nb.frWrite.frTextBody.txBody get 1.0 end]
+    dict set FileData $CurrentEntry $t_text
+    addToCombobox $FileData
+    set ENTRIES [clock format $CurrentEntry -format $DateFormat]
+    writeEntriesToFile $FileData
+}
 ttk::button .nb.frWrite.frButtons.btDelete -text Delete
+
+ttk::combobox .nb.frWrite.cxEntries -state disabled -textvariable ENTRIES
+set ENTRIES ""
 
 pack .nb.frWrite.lbDate -side top -fill x
 pack .nb.frWrite.frTextBody .nb.frWrite.frButtons -side top -fill both
-pack .nb.frWrite.frTextBody.txBody -fill both
-pack .nb.frWrite.frButtons.btSave -side left -fill x -expand 1
-pack .nb.frWrite.frButtons.btDelete -side right -fill x -expand 1
+pack .nb.frWrite.cxEntries -before .nb.frWrite.frButtons -side top -fill x
+
+pack .nb.frWrite.frTextBody.txBody -side left
+pack .nb.frWrite.frTextBody.yscroll -side right -anchor w -fill y
+pack configure .nb.frWrite.frTextBody.txBody -fill both -expand 1
+
+foreach w {New Save Delete} {
+    pack .nb.frWrite.frButtons.bt$w -side left -fill x -expand 1
+}

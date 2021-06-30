@@ -37,6 +37,9 @@ proc ::exWidgets::tk_entry {args} {
 
         # Disable button
         $pathname.clear state disabled
+
+        # Set focus to the entry
+        focus $pathname.entry
     }]
     ttk::label $pathname.label -text $data(label)
 
