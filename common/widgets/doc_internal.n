@@ -276,6 +276,14 @@ exWidgets \- Internal functions in the exWidgets namespace
 .SH SYNOPSIS
 ::exWidgets::parseOptions \fIdataVar\fR \fIspecs\fR \fIargVar\fR
 .sp
+::exWidgets::valid \fIname\fR \fIspecs\fR
+.sp
+::exWidgets::popFront \fIlistVar\fR
+.sp
+::exWidgets::subcmd \fIpathname\fR \fIcmd\fR ?\fIarg\fR?
+.sp
+::exWidgets::validCommands
+.sp
 .BE
 .SH DESCRIPTION
 This man page describes all of the internal functions that can be found in the
@@ -287,20 +295,37 @@ This function is used to parse commandline options\&.
 \fIdataVar\fR is the name of a variable that will hold the values of each option\&.
 It is an array where each index is the name of an option without the leading '-'\&.
 .sp
-.sp
 \fIspecs\fR is a list of lists where each element specifies an option in the form: \fIflag\fR ?\fIdefault\fR?
 If \fIflag\fR ends in "\&.arg" the option accepts an argument from the commandline\&.
 Otherwise the option is a boolean flag that is set to 1 if present\&.
 .sp
-.sp
 \fIargVar\fR is the name of the variable that holds the commandline options to be processed\&.
-In practical applications, this function will be called inside a procedure, so this will always be "args"\&.
-.sp
+In practical applications this function will be called inside a procedure, so this will always be "args"\&.
 .sp
 This function's result is put inside \fIdataVar\fR\&.
 It is an array where each index is the name of an option found in \fIspecs\fR\&.
 The value of each option is mapped to its corresponding index in the array, be they user-defined
 or defaults\&.
+.sp
+The result of this function is that \fIdataVar\fR will contain all the options and their values,
+and \fIargVar\fR will be modified to contain the remainder of the commandline\&.
+This function emits an error if an unknown option is found, and stops processing options if a
+nonoption is found\&.
+.TP
+::exWidgets::valid \fIname\fR \fIspecs\fR
+Returns a string listing all the valid options are the command named by \fIname\fR\&.
+\fIspecs\fR is a list of options and their defaults, formatted the same way as the \fIspecs\fR
+argument in \fB::exWidgets::parseOptions\fR\&.
+.TP
+::exWidgets::popFront \fIlistVar\fR
+Removes the first element of the list contained in \fIlistVar\fR and returns said element\&.
+This is used frequently in the widget functions\&.
+.TP
+::exWidgets::subcmd \fIpathname\fR \fIcmd\fR ?\fIarg\fR?
+This command is not currently used\&.
+.TP
+::exWidgets::validCommands
+Returns a string with all the valid exported commands in this namespace; i\&.e\&., tk_entry\&.
 .PP
 .SH COPYRIGHT
 .nf

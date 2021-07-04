@@ -34,16 +34,17 @@ proc ::exWidgets::__pack_entry {pathname args} {
     }
 }
 
-#proc ::exWidgets::tk_grid {args} {
-#    #variable packinfo
-#    #__pack_internal_entry $pathname [subst \$packinfo()]
-#
-#    set gridArgs
-#    set paths
-#
-#    set paths [lmap arg $args {
-#        if {[regexp {(\.[a-zA-Z_]*.*)|([x^-])} $arg]} {
-#            set arg $arg
-#        }
-#    }]
-#}
+proc ::exWidgets::__pack_text {pathname args} {
+    namespace upvar [namespace current] packinfo($pathname) PackInfo
+
+    ::pack $pathname {*}$args
+    ::pack $pathname.text -fill x -expand 1 -side left -anchor n
+
+    # Vertical and horizontal scrollbars
+    if {[dict get $PackInfo yscrollbar]} {
+        ::pack $pathname.yscroll -side right -anchor n -fill y -expand 1
+    }
+    if {[dict get $PackInfo xscrollbar]} {
+        ::pack $pathname.xscroll -side bottom -anchor n -fill x -expand 1
+    }
+}

@@ -1,4 +1,4 @@
-package provide tk_widgets 0.1b0
+package provide tk_widgets 0.2.0
 
 set srcfile [lindex [dict get [info frame -1] cmd] 1]
 set dir [file dirname $srcfile]
@@ -9,6 +9,7 @@ namespace eval ::exWidgets {}
 
 source [file join $dir tk_entry.tcl]
 source [file join $dir tk_pack.tcl]
+source [file join $dir tk_text.tcl]
 
 namespace eval exWidgets {
     variable packinfo
