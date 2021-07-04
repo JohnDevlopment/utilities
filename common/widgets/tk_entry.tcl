@@ -65,6 +65,16 @@ proc ::exWidgets::tk_entry {args} {
         }
     }
 
+    # Empty string passed as maxlen
+    if {$data(maxlen) eq ""} {set data(maxlen) 0}
+
+    # -maxlen is not a valid integer string
+    if {! [regexp {[0-9]+} $data(maxlen)]} {
+        # TODO: delete the line under this
+        puts stderr "invalid \"-maxlen\" value: $data(maxlen)"
+        set data(maxlen) 0
+    }
+
     # Constrain entry text to a certain length
     if {$data(maxlen) > 0} {
         lappend vcmd {

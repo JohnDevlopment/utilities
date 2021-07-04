@@ -134,6 +134,8 @@ proc ::exWidgets::parseOptions {dataVar specs argVar} {
             break
         }
     } ; # end while
+
+    return
 }
 
 # subcmd PATH CMD ?args ...?
