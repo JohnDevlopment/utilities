@@ -4,12 +4,12 @@
 #   jdebug::off to turn it off
 #
 #   jdebug::eval script - $script is a Tcl script to be run only when the jdebug flag is set
-#   jdebug::print msg [[chan] level] - print $msg on channel $chan at uplevel $level if the jdebug flag is set
+#   jdebug::print tag msg - print $msg with the tag $tag, which can be one of the loglevels
 #
 # Log levels:
 #   FATAL -> ERROR -> WARN -> INFO -> DEBUG -> TRACE -> ALL -> OFF
 
-package provide jdebug 2.0b1
+package provide jdebug 2.0.1
 
 namespace eval jdebug {
     variable enabled 0
@@ -56,15 +56,14 @@ namespace eval jdebug {
 }
 
 proc ::jdebug::on {} {
-    variable enabled
-    set enabled 1
+    variable enabled 1
+    level all
+    header ""
+    trailer ""
     puts "Debug mode enabled"
 }
 
-proc ::jdebug::off {} {
-    variable enabled
-    set enabled 0
-}
+proc ::jdebug::off {} {variable enabled 0}
 
 proc ::jdebug::eval script {
     variable enabled

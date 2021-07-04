@@ -8,4 +8,4 @@
 # script is sourced, the variable $dir must contain the
 # full path name of this file's directory.
 
-package ifneeded jdebug 2.0b1 [list source [file join $dir jdebug-2.tcl]]
+package ifneeded jdebug 2.0.1 [list source [file join $dir jdebug-2.tcl]]
