@@ -189,7 +189,6 @@ namespace eval ::deletequeue {
 
     # Creates a temporary variable, setting its value to VALUE.
     # The variable is put on a queue, and on the next idle frame, it is unset.
-    # TODO: don't allow the same variable to be queued twice.
     proc settemp {var {value ""}} {
         set frame [info frame -1]
         if {[dict get $frame type] eq "proc"} {
@@ -204,10 +203,13 @@ namespace eval ::deletequeue {
         if {! [regexp {(::[a-z_]+)+} $var]} {
             set ns [uplevel {namespace current}]
             if {$ns eq "::"} {
-                lappend Vars "${ns}$var"
+                set vname "${ns}$var"
             } else {
-                lappend Vars [join [concat $ns $var] ::]
+                set vname [join [concat $ns $var] ::]
             }
+
+            # Only add to the queue once
+            if {$vname ni $Vars} {lappend Vars $vname}
         }
 
         if {$AfterID eq ""} {
