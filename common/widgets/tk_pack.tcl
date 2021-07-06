@@ -3,7 +3,7 @@ proc ::exWidgets::tk_pack {pathname args} {
     namespace upvar [namespace current] packinfo($pathname) PackInfo
 
     if {[catch {dict size $PackInfo} err]} {
-        return -code error -errorcode {TK UNKNOWN PATH} \
+        return -code error -errorcode [list TK INVALID_PARAM $pathname] \
             "$pathname is not a path that was created by any of our functions"
     }
 

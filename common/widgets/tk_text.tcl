@@ -4,6 +4,7 @@ proc ::exWidgets::tk_text {args} {
         {wrap.arg char}
         {maxlines.arg 0}
         scrolly
+        {disabledbackground.arg ""}
     }
 
     parseOptions data $specs args
@@ -17,6 +18,11 @@ proc ::exWidgets::tk_text {args} {
     # Invalid path name?
     if {[catch {ttk::frame $pathname} err]} {
         return -code error -errorcode {TK INVALID PARAM} $err
+    }
+
+    # Background when the widget is disabled
+    if {$data(disabledbackground) eq ""} {
+        set data(disabledbackground) [ttk::style lookup TEntry -fieldbackground disabled]
     }
 
     # Wrap parameter
@@ -41,7 +47,8 @@ proc ::exWidgets::tk_text {args} {
 
     # Packing information for, well, the packer
     namespace upvar [namespace current] packinfo($pathname) PackInfo
-    set PackInfo [dict create xscrollbar 0 yscrollbar 0 class text]
+    set PackInfo [dict create xscrollbar 0 yscrollbar 0 class text \
+        disabledbackground $data(disabledbackground)]
 
     # Link horizontal scrollbar if there is no text wrap
     if {$data(wrap) eq "none"} {
@@ -59,6 +66,11 @@ proc ::exWidgets::tk_text {args} {
     text $pathname.text {*}$args
     ttk::scrollbar $pathname.xscroll -orient horizontal -command "$pathname.text xview"
     ttk::scrollbar $pathname.yscroll -orient vertical -command "$pathname.text yview"
+
+    dict set PackInfo background [$pathname.text cget -background]
+
+    # Automatically call the state subcommand in the background
+    after idle [list exw state $pathname [$pathname.text cget -state]]
 
     return $pathname
 }

@@ -1,4 +1,4 @@
-package provide tk_widgets 0.2.0
+package provide tk_widgets 0.3.0
 
 set srcfile [lindex [dict get [info frame -1] cmd] 1]
 set dir [file dirname $srcfile]
@@ -10,16 +10,18 @@ namespace eval ::exWidgets {}
 source [file join $dir tk_entry.tcl]
 source [file join $dir tk_pack.tcl]
 source [file join $dir tk_text.tcl]
+source [file join $dir tk_state.tcl]
+source [file join $dir tk_subcmd.tcl]
 
 namespace eval exWidgets {
     variable packinfo
     variable alias
 
-    variable commands {tk_entry tk_pack subcmd}
+    variable commands {tk_entry tk_pack tk_text tk_state tk_subcmd}
 
     namespace export -clear tk_entry tk_pack
     namespace ensemble create -command ::exw \
-        -map {entry tk_entry pack tk_pack subcmd subcmd}
+        -map {entry tk_entry pack tk_pack text tk_text state tk_state subcmd tk_subcmd}
 }
 
 proc ::exWidgets::validCommands {} {
@@ -137,16 +139,4 @@ proc ::exWidgets::parseOptions {dataVar specs argVar} {
     } ; # end while
 
     return
-}
-
-# subcmd PATH CMD ?args ...?
-proc ::exWidgets::subcmd {pathname cmd args} {
-    namespace upvar [namespace current] packinfo($pathname) PackInfo
-
-    if {[catch {dict size $PackInfo} err]} {
-        return -code error -errorcode {TK UNKNOWN PATH} \
-            "$pathname is not a path that was created by any of our functions"
-    }
-
-    tailcall "__subcmd_[dict get $PackInfo class]" $pathname $cmd {*}$args
 }
