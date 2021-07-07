@@ -1,55 +1,72 @@
-# Add to notebook
-.nb add [ttk::frame .nb.frWrite] -text "Write Entry" -sticky new
+.nb add [ttk::frame .nb.frame1] -text Write -sticky new
 
-ttk::frame .nb.frWrite.frTextBody
-ttk::frame .nb.frWrite.frButtons
-bind .nb.frWrite.frButtons <Expose> {+ updateEntryButtonsStates}
+settemp frame .nb.frame1
 
-ttk::label .nb.frWrite.lbDate -text ""
+ttk::label $frame.date
 
-settemp t_frtext .nb.frWrite.frTextBody
-
-text .nb.frWrite.frTextBody.txBody -background white -state disabled -wrap word \
-    -yscrollcommand "$t_frtext.yscroll set"
-after idle {
-    settemp t_msg "This field is currently disabled. Please go to the\
-\"File Options\" tab and open or save a new file."
-    insertText .nb.frWrite.frTextBody.txBody 1.0 $t_msg
-}
-
-ttk::scrollbar .nb.frWrite.frTextBody.yscroll -orient vertical \
-    -command "$t_frtext.txBody yview"
-
-ttk::button .nb.frWrite.frButtons.btNew -text New -command {
-    settemp t_date [clock seconds]
-    set CurrentEntry $t_date
-    .nb.frWrite.lbDate configure -text [clock format $t_date -format "Date: $DateFormat"]
-    .nb.frWrite.frTextBody.txBody delete 1.0 end
-}
-ttk::button .nb.frWrite.frButtons.btSave -text Save -command {
-    if {! $CurrentEntry} {
-        displayError "Unable to save entry" "No entry is currently being edited."
-        return
+exw text -scrolly $frame.text -state disabled -undo 1 -autoseparators 1
+bind $frame.text.text <<Modified>> {
+    settemp title "$TitleBase - $CurrentFile"
+    if {[%W edit modified]} {
+        append title " (modified)"
     }
-    settemp t_text [.nb.frWrite.frTextBody.txBody get 1.0 end]
-    dict set FileData $CurrentEntry $t_text
-    addToCombobox $FileData
-    set ENTRIES [clock format $CurrentEntry -format $DateFormat]
-    writeEntriesToFile $FileData
+    wm title . $title
 }
-ttk::button .nb.frWrite.frButtons.btDelete -text Delete
 
-ttk::combobox .nb.frWrite.cxEntries -state disabled -textvariable ENTRIES
-set ENTRIES ""
-
-pack .nb.frWrite.lbDate -side top -fill x
-pack .nb.frWrite.frTextBody .nb.frWrite.frButtons -side top -fill both
-pack .nb.frWrite.cxEntries -before .nb.frWrite.frButtons -side top -fill x
-
-pack .nb.frWrite.frTextBody.txBody -side left
-pack .nb.frWrite.frTextBody.yscroll -side right -anchor w -fill y
-pack configure .nb.frWrite.frTextBody.txBody -fill both -expand 1
-
-foreach w {New Save Delete} {
-    pack .nb.frWrite.frButtons.bt$w -side left -fill x -expand 1
+ttk::combobox $frame.entries -textvariable SELECTED_ENTRY -state readonly
+set SELECTED_ENTRY ""
+$frame.entries state disabled
+bind $frame.entries <<ComboboxSelected>> {
+    settemp date [%W get]
+    set CurrentEntry [clock scan $date -format $DateFormat]
+    exw subcmd .nb.frame1.text clear
+    exw subcmd .nb.frame1.text insert 1.0 [dict get $FileData $CurrentEntry]
+    exw subcmd .nb.frame1.text edit modified 0
+    exw subcmd .nb.frame1.text edit reset
 }
+
+ttk::frame $frame.buttons
+
+settemp scripts [list \
+{
+    exw state .nb.frame1.text normal
+    exw subcmd .nb.frame1.text clear
+    exw subcmd .nb.frame1.text edit modified 0
+    exw subcmd .nb.frame1.text edit reset
+
+    set CurrentEntry [clock seconds]
+} \
+{
+    if {[exw subcmd .nb.frame1.text instate disabled]} {
+        return [displayError "The text field is disabled."]
+    }
+
+    settemp text [exw subcmd .nb.frame1.text get 1.0 end]
+
+    if {$text ne ""} {
+        dict set FileData $CurrentEntry [string trimright $text]
+        exw subcmd .nb.frame1.text edit modified 0
+        exw subcmd .nb.frame1.text edit reset
+    } else {
+        displayError "The text field is empty."
+    }
+} \
+{
+    settemp entry $CurrentEntry
+    if {$entry eq ""} return
+    set CurrentEntry ""
+    dict unset FileData $entry
+    exw subcmd .nb.frame1.text clear
+}]
+settemp w
+settemp s
+foreach w {new save delete} s $scripts {
+    ttk::button $frame.buttons.$w -text [string totitle $w] -command $s -state disabled
+}
+
+pack $frame.date $frame.entries -fill x -side top -anchor n
+exw pack $frame.text -before $frame.entries -fill both -side top -anchor n
+
+pack $frame.buttons -fill x -side top
+    settemp children [winfo children $frame.buttons]
+    pack {*}$children -side left -fill x -expand 1 -anchor n

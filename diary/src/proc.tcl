@@ -1,186 +1,155 @@
-proc processFlags {name1 name2 op} {
-    switch -exact $name1 {
-    FileLoaded {
-        global FileLoaded
-
-        if {$FileLoaded} {
-            # Enable the list of entries but make it readonly
-            .nb.frWrite.cxEntries state {!disabled readonly}
-            .nb.frWrite.cxEntries configure -values {}
-            insertText .nb.frWrite.frTextBody.txBody 1.0 "" 1
-
-            tmpfile::new
-        } else {
-            #
-        }
-
-        # Causes the close button to update its state
-        event generate .nb.frFile.btClose <Expose> -when tail
-    }
-    EditingEntry {
-        #
-    }
-    }
+# displayError msg ?-title msg? ?-detail str?
+proc displayError {msg args} {
+    tailcall tk_messageBox -parent . -icon error -message $msg {*}$args
 }
 
-proc finalizeWrite {} {
-    global FileData SAVEFILE DIR
-
-    set file [file join $DIR $SAVEFILE]
-
-    if {$FileData ne ""} {
-        try {
-            file copy -force $tmpfile::filepath $file
-        } on error {err codes} {
-            puts stderr "error returned: $err"
-            puts stderr "error codes: $codes"
-        } finally {
-            tmpfile::closetmp
-        }
-    }
-}
-
-proc writeEntriesToFile {entries} {
-    global DateFormat
-
-    set kv [list]
-    dict for {k v} $entries {
-        lappend kv [clock format $k -format $DateFormat] [json::write string $v]
-    }
-
-    set json [json::write object {*}$kv]
-    tmpfile::write $json
-}
-
-proc readEntriesFromFile {file} {
-    global DateFormat FileData
-
-    set code 0
-    set result ""
-
-    set id [open $file r]
-
-    try {
-        set data [read $id]
-        set FileData [json::json2dict $data]
-    } on error {result} {
-        set code 1
-    } finally {
-        close $id
-    }
-
-    set FileData [dict map {k v} $FileData {
-        set k [clock scan $k -format $DateFormat]
-        set v $v
-    }]
-
-    .nb.frWrite.cxEntries configure -values [dict keys $FileData]
-
-    return -code $code $result
-}
-
-proc displayError {msg detail {title "Application Error"}} {
-    return [tk_messageBox -icon error -title $title -parent . -message $msg -detail $detail]
-}
-
-proc addToCombobox {dictValue} {
-    global DateFormat
-
-    set w .nb.frWrite.cxEntries
-    set dictValue [dict map {k v} $dictValue {
-        set k [clock format $k -format $DateFormat]
-        set v $v
-    }]
-
-    .nb.frWrite.cxEntries configure -values [dict keys $dictValue]
-
-    return
-}
-
-proc updateEntryButtonsStates {} {
-    global EditingEntry FileLoaded
-
-    if {$FileLoaded} {
-        set state !disabled
-    } else {
-        set state disabled
-    }
-
-    set entry [expr "$EditingEntry & 1"]
-    set w .nb.frWrite.frButtons
-    set states [list disabled !disabled]
-    $w.btNew state [lindex $states $entry]
-
-    foreach button {btSave btDelete} {$w.$button state $state}
-
-    return
-}
-
-proc insertText {window index text {clear 0}} {
-    set oldstate [$window cget -state]
-    $window configure -state normal
-    if {$clear} {$window delete 1.0 end}
-    $window insert $index $text
-    $window configure -state $oldstate
-}
-
-# usage: getFile var parent mode<open|save> ?-entry? ?-option value ...?
-proc getFile {varname parent mode args} {
-    set p [lindex $args 0]
-    set fromEntry [expr {$p eq "-entry"}]
-    if {$fromEntry} {set args [lreplace $args 0 0]}
-    unset p
-
-    # Command based on mode
-    switch -exact $mode {
-        open {
-            set cmd tk_getOpenFile
-        }
-        save {
-            set cmd tk_getSaveFile
-        }
-        default {
-            return -code error "invalid mode \"$mode\": must be either open or save"
-        }
-    }
-
-    set result [$cmd -parent $parent {*}$args]
-    if {$result eq ""} return
-
-    set file [file tail $result]
-    set dir [file dirname $result]
-
-    # Set globals and change the title
-    uplevel #0 [subst {
-        if {"$mode" eq "save" || \$SAVEFILE eq ""} {
-            set SAVEFILE "$file"
-        }
-
-        set ENTRIES ""
-        set OPENFILE "$file"
-        set DIR "$dir"
-        wm title . "Diary - \$$varname (\$DIR)"
-        set FileLoaded 1
-    }]
-
+proc popFront {listVar} {
+    upvar $listVar List
+    set result [lindex $List 0]
+    set List [lreplace $List 0 0]
     return $result
 }
 
-proc getDir {varname parent args} {
-    upvar #0 $varname Dir
-
-    # Returns an error if the variable does not exist
-    string length $Dir
-
-    set result [tk_chooseDirectory -parent $parent {*}$args]
-    if {$result ne ""} {
-        set Dir [file dirname $result]
+proc textboxFocused {wgt script} {
+    set fw [focus -displayof .]
+    if {$fw eq $wgt} {
+        uplevel [string map [list %W $fw] $script]
     }
-
-    return
 }
 
-# tmpfile namespace
+proc fileCommand {op args} {
+    switch -exact $op {
+    new {
+        # Clear text box
+        exw state .nb.frame1.text normal
+        exw subcmd .nb.frame1.text clear
+        exw state .nb.frame1.text disabled
+
+        # Clear list of entries
+        .nb.frame1.entries configure -values {}
+        .nb.frame1.entries state {!disabled readonly}
+
+        # Enable buttons
+        foreach w {new save delete} {.nb.frame1.buttons.$w state !disabled}
+
+        uplevel #0 {
+            set SELECTED_ENTRY ""
+            set CurrentFile "untitled"
+        }
+    }
+
+    close {
+        # Clear text box
+        exw subcmd .nb.frame1.text clear
+        exw state .nb.frame1.text disabled
+
+        # Clear list of entries
+        .nb.frame1.entries configure -values {}
+        .nb.frame1.entries state disabled
+
+        exw subcmd .nb.frame1.text edit modified 0
+        exw subcmd .nb.frame1.text edit reset
+
+        # Enable buttons
+        foreach w {new save delete} {.nb.frame1.buttons.$w state disabled}
+
+        uplevel #0 {
+            set CurrentFile ""
+            set SELECTED_ENTRY ""
+        }
+        focus .
+    }
+
+    save {
+        global FileData CurrentFile
+
+        if {$CurrentFile ne "" && $CurrentFile ne "untitled"} {
+            # Assemble list of key-value pairs
+            set temp [list]
+            dict for {k v} $FileData {lappend temp $k [json::write string $v]}
+
+            # Format into json string
+            set data [json::write object {*}$temp]
+
+            # Write string to file
+            set id [open $ofile w]
+            puts $id $data
+            close $id
+
+            exw subcmd .nb.frame1.text edit modified 0
+            exw subcmd .nb.frame1.text edit reset
+        }
+    }
+
+    saveas {
+        global FileData CurrentFile
+
+        if {$CurrentFile eq ""} {
+            return [displayError "Cannot save file!" -detail "No file to save!"]
+        }
+
+        if {$FileData eq ""} {
+            return [displayError "Cannot save file!" -detail "There is no data to save to file."]
+        }
+
+        set ofile [tk_getSaveFile -parent . -title "Save to File"]
+        if {$ofile ne ""} {
+            # Assemble list of key-value pairs
+            set temp [list]
+            dict for {k v} $FileData {lappend temp $k [json::write string $v]}
+
+            # Format into json string
+            set data [json::write object {*}$temp]
+
+            # Write string to file
+            set id [open $ofile w]
+            puts $id $data
+            close $id
+
+            set CurrentFile $ofile
+
+            cd [file dirname $ofile]
+
+            exw subcmd .nb.frame1.text edit modified 0
+            exw subcmd .nb.frame1.text edit reset
+
+            # TODO: print confirmation message to a statusbar
+        }
+    }
+
+    open {
+        set ifile [tk_getOpenFile -parent . -title "Open File"]
+        if {$ifile ne ""} {
+            set id [open $ifile r]
+            set data [read $id]
+            close $id
+
+            set jsonData [json::json2dict $data]
+
+            # Clear text box
+            exw state .nb.frame1.text normal
+            exw subcmd .nb.frame1.text clear
+
+            # Clear list of entries
+            .nb.frame1.entries configure -values {}
+            .nb.frame1.entries state {!disabled readonly}
+
+            # Enable buttons
+            foreach w {new save delete} {.nb.frame1.buttons.$w state !disabled}
+
+            global FileData SELECTED_ENTRY CurrentEntry CurrentFile
+            set CurrentEntry ""
+            set FileData $jsonData
+            set SELECTED_ENTRY ""
+            set CurrentFile $ifile
+
+            cd [file dirname $ifile]
+
+            # TODO: print confirmation message to a statusbar
+        }
+    }
+    }
+}
 
 namespace eval tmpfile {
     variable tmpid ""
