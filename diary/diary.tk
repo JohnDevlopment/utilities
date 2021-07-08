@@ -11,11 +11,33 @@ const TitleBase Diary
 
 wm title . Diary
 wm protocol . WM_DELETE_WINDOW {
-    tmpfile::closetmp
+    if {$FileModified} {
+        set yn [tk_messageBox -parent . -title "Unsaved Changes" -type yesnocancel -icon question \
+            -message "You have unsaved changes. Do you want to save those changes?"]
+        if {$yn eq "yes"} {
+            # File cannot be modified (flag = true) if no file is open, so only
+            # check if the filename is "untitled" or not -- it will not be empty string
+            if {$CurrentFile eq "untitled"} {
+                set temp saveas
+            } else {
+                set temp save
+            }
+            set code [catch [list fileCommand $temp] err]
+            if {$code} {
+                printErrorToStdout "Error from command \"fileCommand $temp\"" $err
+                exit 1
+            }
+        } elseif {$yn eq "cancel"} {
+            unset yn
+            return
+        }
+    }
     exit
 }
+wm minsize . 663 558
 
-pack [ttk::notebook .nb] -fill both -expand 1
+#pack [ttk::notebook .nb] -fill both -expand 1
+place [ttk::notebook .nb] -relwidth 1 -relheight 0.95 -x 0 -rely 0.05
 
 settemp t_srcdir [file join $RootDir src]
 
@@ -54,8 +76,9 @@ menu .menuButtons.edit.menu -tearoff 0
     textboxFocused .nb.frame1.text.text {tk_textPaste %W}
 }
 
-pack .menuButtons -side top -anchor n -fill x -expand 1 -before .nb
+#pack .menuButtons -side top -anchor n -fill x -expand 1 -before .nb
+place .menuButtons -x 0 -y 0 -relwidth 1 -relheight 0.05
     settemp children [winfo children .menuButtons]
     pack {*}$children -side left -anchor n
 
-bind . <3> {puts [wm geometry .]}
+bind . <3> {puts [wm geometry .] ; puts [.nb.frame1.statusbar sashpos 0]}

@@ -1,16 +1,20 @@
 set CurrentFile ""
 set CurrentEntry ""
 set FileData ""
+set FileModified 0
+set EntryModified 0
 
 trace add variable CurrentFile write [lambda {name n op} {
     upvar #0 $name Var
+
     if {$Var ne ""} {
         global TitleBase
-        wm title . "$TitleBase - $Var"
+        set title "$TitleBase - [file tail $Var]"
     } else {
         global TitleBase
-        wm title . $TitleBase
+        set title $TitleBase
     }
+    wm title . $title
 }]
 
 trace add variable CurrentEntry write [lambda {name1 name2 op} {
@@ -38,3 +42,6 @@ trace add variable FileData write [lambda {name n op} {
         set SELECTED_ENTRY ""
     }
 }]
+
+trace add variable FileModified write processFlag
+trace add variable EntryModified write processFlag

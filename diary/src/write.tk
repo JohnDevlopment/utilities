@@ -1,16 +1,12 @@
-.nb add [ttk::frame .nb.frame1] -text Write -sticky new
+.nb add [ttk::frame .nb.frame1] -text Write -sticky news
 
 settemp frame .nb.frame1
 
 ttk::label $frame.date
 
-exw text -scrolly $frame.text -state disabled -undo 1 -autoseparators 1
+exw text -scrolly $frame.text -state disabled -undo 1
 bind $frame.text.text <<Modified>> {
-    settemp title "$TitleBase - $CurrentFile"
-    if {[%W edit modified]} {
-        append title " (modified)"
-    }
-    wm title . $title
+    set EntryModified [%W edit modified]
 }
 
 ttk::combobox $frame.entries -textvariable SELECTED_ENTRY -state readonly
@@ -37,6 +33,8 @@ settemp scripts [list \
     set CurrentEntry [clock seconds]
 } \
 {
+    # Save entry
+
     if {[exw subcmd .nb.frame1.text instate disabled]} {
         return [displayError "The text field is disabled."]
     }
@@ -45,18 +43,35 @@ settemp scripts [list \
 
     if {$text ne ""} {
         dict set FileData $CurrentEntry [string trimright $text]
+
+        # Reset modified flag and reset undo stack
         exw subcmd .nb.frame1.text edit modified 0
         exw subcmd .nb.frame1.text edit reset
+
+        # File modified
+        set FileModified 1
+        printStatusbar 0 "Entry Saved" 2000
     } else {
         displayError "The text field is empty."
     }
 } \
 {
+    # Delete entry
+
+    if {$CurrentEntry eq ""} return
+
     settemp entry $CurrentEntry
-    if {$entry eq ""} return
     set CurrentEntry ""
     dict unset FileData $entry
+
+    # File modified
+    set FileModified 1
+    printStatusbar 0 "Entry Deleted" 2000
+
+    # Clear text; reset modified flag and reset undo stack
     exw subcmd .nb.frame1.text clear
+    exw subcmd .nb.frame1.text edit modified 0
+    exw subcmd .nb.frame1.text edit reset
 }]
 settemp w
 settemp s
@@ -64,9 +79,21 @@ foreach w {new save delete} s $scripts {
     ttk::button $frame.buttons.$w -text [string totitle $w] -command $s -state disabled
 }
 
+# Paned window
+ttk::panedwindow $frame.statusbar -orient horizontal
+$frame.statusbar add [ttk::label $frame.statusbar.entryMod -relief sunken] \
+    -weight 2
+$frame.statusbar add [ttk::label $frame.statusbar.fileMod -relief sunken] \
+    -weight 2
+$frame.statusbar add [ttk::label $frame.statusbar.dir -relief sunken] \
+    -weight 3
+after idle {printStatusbar 2 [pwd]}
+
 pack $frame.date $frame.entries -fill x -side top -anchor n
 exw pack $frame.text -before $frame.entries -fill both -side top -anchor n
 
 pack $frame.buttons -fill x -side top
     settemp children [winfo children $frame.buttons]
     pack {*}$children -side left -fill x -expand 1 -anchor n
+
+pack $frame.statusbar -fill x -side top
