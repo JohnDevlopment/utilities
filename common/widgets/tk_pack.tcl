@@ -38,11 +38,12 @@ proc ::exWidgets::__pack_text {pathname args} {
     namespace upvar [namespace current] packinfo($pathname) PackInfo
 
     ::pack $pathname {*}$args
-    ::pack $pathname.text -fill x -expand 1 -side left -anchor n
+    ::pack $pathname.text -fill both -expand 1 -side left -anchor n -padx {0 30}
 
     # Vertical and horizontal scrollbars
     if {[dict get $PackInfo yscrollbar]} {
-        ::pack $pathname.yscroll -side right -anchor n -fill y -expand 1
+        #::pack $pathname.yscroll -side right -anchor w -fill y -expand 1
+        ::place $pathname.yscroll -in $pathname.text -bordermode outside -relx 1 -y 0 -relheight 1
     }
     if {[dict get $PackInfo xscrollbar]} {
         ::pack $pathname.xscroll -side bottom -anchor n -fill x -expand 1
