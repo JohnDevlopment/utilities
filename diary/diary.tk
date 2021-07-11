@@ -76,6 +76,18 @@ menu .menuButtons.edit.menu -tearoff 0
     textboxFocused .nb.frame1.text.text {tk_textPaste %W}
 }
 
+ttk::menubutton .menuButtons.tools -menu .menuButtons.tools.menu -text Tools
+menu .menuButtons.tools.menu -tearoff 0
+.menuButtons.tools.menu add command -label "Insert Date" -command {
+    settemp focus [focus -displayof .]
+    if {$focus eq ".nb.frame1.text.text"} {
+        settemp sec [clock seconds]
+        exw subcmd .nb.frame1.text instate normal {
+            exw subcmd .nb.frame1.text insert insert [clock format $sec -format $DateFormat]
+        }
+    }
+}
+
 #pack .menuButtons -side top -anchor n -fill x -expand 1 -before .nb
 place .menuButtons -x 0 -y 0 -relwidth 1 -relheight 0.05
     settemp children [winfo children .menuButtons]

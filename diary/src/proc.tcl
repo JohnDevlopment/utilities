@@ -76,7 +76,7 @@ proc fileCommand {op args} {
     save {
         global FileData CurrentFile FileModified
 
-        # TODO: if file is not modified, then don't save the file
+        if {! $FileModified} return
 
         # Input errors
         if {$CurrentFile eq ""} {
@@ -112,7 +112,7 @@ proc fileCommand {op args} {
     saveas {
         global FileData CurrentFile FileModified
 
-        # TODO: if file is not modified, then don't save the file
+        if {! $FileModified} return
 
         if {$CurrentFile eq ""} {
             return [displayError "Cannot save file!" -detail "No file to save!"]
@@ -253,54 +253,4 @@ proc textboxFocused {wgt script} {
     if {$fw eq $wgt} {
         uplevel [string map [list %W $fw] $script]
     }
-}
-
-namespace eval tmpfile {
-    variable tmpid ""
-    variable filepath ""
-}
-
-proc ::tmpfile::__check {} {
-    variable tmpid
-    variable filepath
-
-    if {$tmpid eq ""} {
-        return -code error "no tempfile is open right now"
-    }
-
-    return
-}
-
-proc ::tmpfile::new {} {
-    variable tmpid
-    variable filepath
-
-    closetmp
-
-    set tmpid [file tempfile filepath]
-
-    return $tmpid
-}
-
-proc ::tmpfile::closetmp {} {
-    variable tmpid
-    variable filepath
-
-    if {$tmpid ne ""} {
-        close $tmpid
-        file delete $filepath
-        set tmpid ""
-        set filepath ""
-    }
-}
-
-proc ::tmpfile::write {data} {
-    variable tmpid
-    variable filepath
-
-    __check
-    chan truncate $tmpid 0
-    seek $tmpid 0 start
-    puts $tmpid $data
-    flush $tmpid
 }

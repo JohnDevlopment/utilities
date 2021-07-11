@@ -4,11 +4,10 @@ settemp frame .nb.frame1
 
 ttk::label $frame.date
 
-exw text -scrolly $frame.text -state disabled -undo 1
+exw text -wrap word -scrolly $frame.text TEXTBOX -state disabled -undo 1
 bind $frame.text.text <<Modified>> {
     set EntryModified [%W edit modified]
 }
-
 ttk::combobox $frame.entries -textvariable SELECTED_ENTRY -state readonly
 set SELECTED_ENTRY ""
 $frame.entries state disabled
@@ -51,6 +50,8 @@ settemp scripts [list \
         # File modified
         set FileModified 1
         printStatusbar 0 "Entry Saved" 2000
+
+        exw subcmd .nb.frame1.text instate
     } else {
         displayError "The text field is empty."
     }
@@ -76,6 +77,14 @@ settemp scripts [list \
 settemp w
 settemp s
 foreach w {new save delete} s $scripts {
+    append s [subst {
+        if {\[exw subcmd $frame.text instate normal]} {
+            focus $frame.text.text
+        } else {
+            focus $frame
+        }
+    }]
+
     ttk::button $frame.buttons.$w -text [string totitle $w] -command $s -state disabled
 }
 
