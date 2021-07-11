@@ -274,71 +274,91 @@ Database Class:	\\fB\\$3\\fR
 .SH NAME
 exw_entry \- Create and manipulate expanded one-line 'entry' widgets
 .SH SYNOPSIS
-exw entry ?\fIoptions\fR? \fIpathName\fR ?\fIoptions\fR?
+package require \fBtk_widgets  ?0\&.4?\fR
+.sp
+exw entry ?\fIoptions\fR? \fIpathName\fR ?\fIidentifier\fR? ?\fIoptions\fR?
+.sp
+exw subcmd \fIpathName\fR \fIcmd\fR ?args\&.\&.\&.?
+.sp
+\fIidentifier\fR \fIcmd\fR ?args\&.\&.\&.?
 .sp
 .BE
 .SH DESCRIPTION
 The command \fBexw entry\fR creates a new window (given by the \fIpathName\fR argument) and makes
 it an expanded \fBttk::entry\fR widget\&.
-The options to the left of \fIpathName\fR must be one of the options listed below\&.
-The options to the right of \fIpathName\fR are forwarded to the \fBttk::entry\fR command\&.
-\fBexw entry\fR returns \fIpathName\fR\&.
-At the time this command is invoked, \fIpathName\fR must not already exist while its parent must\&.
-.TP
-exw entry ?\fIoptions\fR? \fIpathName\fR ?\fIoptions\fR?
+Options, listed in the section below, can be specified on the commandline to the left of \fIpathName\fR\&.
+Options to the right of \fIpathName\fR are forwarded as-is to the \fBttk::entry\fR command\&.
+(See the related documentation for details\&.)
+The path to the newly created window is returned\&.
+At the time this command is invoked \fIpathName\fR must not already exist, yet its parent must exist\&.
 .PP
+If \fIidentifier\fR is specified a command of the same name is created\&.
+At the time this command is invoked, \fIidentifier\fR must not already exist as a command\&.
+\fIidentifier\fR cannot have any hyphens or periods\&.
+See the section \fBWIDGET COMMAND\fR for a complete description of this command\&.
 .SH "WIDGET-SPECIFIC OPTIONS"
-The options listed in this section must be specified *before* \fIpathName\fR, as it pertains to
-this command and not the \fBttk::entry\fR widget\&.
-.LP
-.nf
-.ta 6c
-Command-Line Switch:	\fB-maxlen\fR
-Database Name:	\fBmaxLen\fR
-Database Class:	\fBMaxLen\fR
-
-.fi
-.IP
+The options listed below are only recognized when put to the left of \fIpathName\fR\&.
+They are write-only options that can be specified only at the creation of this widget\&.
+.TP
+\fB-maxlen\fR
 If this option is provided, it specifies the maximum length of the text inside the entry\&.
 It must be greater than zero to take effect\&.
 When active, it causes the entry to reject the adding of characters when the length of the current
 string is greater than or equal to this option\&.
-If this option is an empty string it defaults to zero\&.
-.LP
-.nf
-.ta 6c
-Command-Line Switch:	\fB-label\fR
-Database Name:	\fBlabel\fR
-Database Class:	\fBLabel\fR
-
-.fi
-.IP
+If this option is left out or is an empty string it defaults to zero\&.
+.TP
+\fB-label\fR \fItext\fR
 If this option is provided, it specifies a textual string to display in a label to the left of the
 entry widget\&.
 If the option is left out or is an empty string, no label is displayed\&.
-.LP
-.nf
-.ta 6c
-Command-Line Switch:	\fB-scrollx\fR
-Database Name:	\fBscrollX\fR
-Database Class:	\fBScrollX\fR
-
-.fi
-.IP
+.TP
+\fB-scrollx\fR
 When this option is present, a horizontal scrollbar is displayed below the entry widget\&.
 The scrollbar is setup to scroll the entry widget when the textual data inside it gets too big\&.
-.LP
-.nf
-.ta 6c
-Command-Line Switch:	\fB-clearbutton\fR
-Database Name:	\fBclearButton\fR
-Database Class:	\fBClearButton\fR
-
-.fi
-.IP
-If this option is present, a button is display inside the left edge of the entry widget\&.
-When clicked, this button clears all the test inside of the entry widget\&.
+.TP
+\fB-clearbutton\fR
+If this option is present, a button is display inside the right edge of the entry widget that,
+when pressed, clears all of the text inside the entry\&.
 .PP
+.SH "WIDGET COMMAND"
+After the entry widget is created, a number of subcommands are available\&.
+.TP
+exw entry ?\fIoptions\fR? \fIpathName\fR ?\fIidentifier\fR? ?\fIoptions\fR?
+This command creates a new extended entry widget located at \fIpathName\fR\&.
+The options to the left of \fIpathName\fR shall be one or more of the options listed above\&.
+The options to the right can be any of the valid options for \fBttk::entry\fR\&.
+If this command succeeds \fIpathName\fR is returned\&.
+.TP
+exw subcmd \fIpathName\fR \fIcmd\fR ?args\&.\&.\&.?
+This lets you access any of the entry's widget commands\&.
+This command is equivelent to \fIpathName\fR\&.entry \fIcmd\fR ?args\&.\&.\&.?\&.
+.TP
+\fIidentifier\fR \fIcmd\fR ?args\&.\&.\&.?
+Use this command as an alternative to \fBexw subcmd\fR\&.
+\fIidentifier\fR forwards its arguments to the command \fIpathName\fR\&.
+.PP
+.SH EXAMPLES
+.PP
+Create an entry with a max length of thirty characters\&.
+No identifier is specified\&.
+.CS
+
+
+exw entry -maxlen 30 \&.without
+exw pack \&.without
+exw subcmd \&.without insert end "I am a good programmer!"
+
+.CE
+.PP
+Creates an entry with the identifier \fIENTRY\fR\&.
+.CS
+
+
+exw entry \&.with ENTRY
+exw pack \&.with
+ENTRY insert end "I am a good programmer!"
+
+.CE
 .SH COPYRIGHT
 .nf
 Copyright (c) John Russell 2021

@@ -1,5 +1,7 @@
 # tk_entry ?switches? pathName ?ttk_entrySwitches ...?
 proc ::exWidgets::tk_entry {args} {
+    variable identifiers
+
     set specs {
         {maxlen.arg 0}
         {label.arg ""}
@@ -9,15 +11,41 @@ proc ::exWidgets::tk_entry {args} {
 
     parseOptions data $specs args
 
+    # Invalid path
     set pathname [popFront args]
+    set id [lindex $args 0]
+
     if {$pathname eq ""} {
         return -code error -errorcode {TK MISSING PATHNAME} \
             "missing pathname for entry"
+    } elseif {[regexp {\.[a-z]*} $id]} {
+        set pathname $id
+        return -code error -errorcode [list TK INVALID_PARAM $pathname] \
+            "invalid path \"$pathname\""
     }
+
+    # An identifier has no dots (i.e., ENTRY instead of .entry) or hyphens (i.e., -option or op-tion)
+    set identifiers($pathname) ""
+    set cmd ""
+
+    if {([string first . $id] < 0 && [string first - $id] < 0) && [regexp {[a-zA-Z_]*} $id]} {
+        set identifiers($pathname) $id
+        set cmd $id
+        set args [lreplace $args 0 0]
+    }
+    unset id
 
     # Invalid path name?
     if {[catch {ttk::frame $pathname} err]} {
         return -code error -errorcode {TK INVALID PARAM} $err
+    }
+
+    # Identifier already exists as a command
+    if {$cmd ne ""} {
+        if {[info commands $cmd] ne ""} {
+            return -code error -errorcode [list TK INVALID_PARAM $cmd] \
+                "invalid identifier \"$cmd\": a command by that name already exists"
+        }
     }
 
     # Create subwidgets
@@ -88,10 +116,11 @@ proc ::exWidgets::tk_entry {args} {
     lappend vcmd {return 1}
 
     set vcmd [join $vcmd "\n"]
-    #set invcmd [join $invcmd "\n"]
 
     $pathname.entry configure -validate key -validatecommand [subst -nocommands $vcmd] \
         -invalidcommand [subst -nocommands $invcmd]
+
+    __set_cmd_and_destroy entry $pathname $cmd
 
     # Information for the geometry manager.
     namespace upvar [namespace current] packinfo($pathname) PackInfo

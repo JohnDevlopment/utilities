@@ -2,7 +2,7 @@
 '\" Generated from file '' by tcllib/doctools with format 'nroff'
 '\" Copyright (c) John Russell 2021
 '\"
-.TH "exw_entry" n   "Expanded Tk Widgets"
+.TH "exw_text" n   "Expanded Tk Widgets"
 .\" The -*- nroff -*- definitions below are for supplemental macros used
 .\" in Tcl/Tk manual entries.
 .\"
@@ -272,9 +272,11 @@ Database Class:	\\fB\\$3\\fR
 ..
 .BS
 .SH NAME
-exw_entry \- Create and manipulate expanded multi-line 'text' widgets
+exw_text \- Create and manipulate expanded multi-line 'text' widgets
 .SH SYNOPSIS
-exw text ?\fIoptions\fR? \fIpathName\fR ?\fIoptions\fR?
+package require \fBtk_widgets  ?0\&.4?\fR
+.sp
+exw text ?\fIoptions\fR? \fIpathName\fR ?\fIidentifier\fR? ?\fIoptions\fR?
 .sp
 exw subcmd \fIpathName\fR clear
 .sp
@@ -282,20 +284,20 @@ exw subcmd \fIpathName\fR instate \fIstatespec\fR ?\fIscript\fR?
 .sp
 exw state \fIpathName\fR \fIstatespec\fR
 .sp
+\fIidentifier\fR cmd ?args\&.\&.\&.?
+.sp
 .BE
 .SH DESCRIPTION
 The \fBexw text\fR command creates a window (provided by the \fIpathName\fR argument) and makes
 it into an extended \fBtext\fR widget\&.
 At the time this command is invoked, \fIpathName\fR must not already exist, yet its parent must exist\&.
+If the optional \fIidentifier\fR argument is specified, a command named after it will be created\&.
+At the time of this widget's creation, there must not already be a command named \fIidentifier\fR\&.
+In addition, \fIidentifier\fR cannot have any hyphens or periods\&.
 .PP
 This command creates a megawidget that expands the functionality of the regular \fBtext\fR widget,
-giving it some additional traits that weren't present in the original\&.
-For example, the text widget changes its background color based on whether it's disabled or not\&.
-.PP
-The following command creates the extended text widget:
-.TP
-exw text ?\fIoptions\fR? \fIpathName\fR ?\fIoptions\fR?
-.PP
+giving it some additional features that weren't present in the original\&.
+The options listed below talk about these features\&.
 .SH "COMMAND-SPECIFIC OPTIONS"
 .TP
 \fB-wrap\fR ( word | char | none )
@@ -321,24 +323,52 @@ If this option is omitted or is an empty string, it defaults to the background c
 uses when it is disabled\&.
 .PP
 .SH "WIDGET COMMAND"
-When an extended text widget is created, its commands can be invoked with \fBexw subcmd\fR\&.
-In addition to these commands there are also a few extended commands, and they are listed below\&.
+When an extended text widget is created, a number of commands are made available\&.
+If a command other than any listed below is used, it is interpreted as a \fBtext\fR widget
+command (see related documentation)\&.
+.TP
+exw text ?\fIoptions\fR? \fIpathName\fR ?\fIidentifier\fR? ?\fIoptions\fR?
+See \fBDESCRIPTION\fR\&.
 .TP
 exw subcmd \fIpathName\fR clear
-This command clears all of the text in the widget, provided it is not disabled\&.
+Clears the text widget, provided it is enabled\&.
 .TP
 exw subcmd \fIpathName\fR instate \fIstatespec\fR ?\fIscript\fR?
 This command tests the widget's state\&.
-If \fIscript\fR is not specified, this command returns 1 if the widget state matches
-\fIstatespec\fR and 0 otherwise\&.
+If \fIscript\fR is not specified, this command returns 1 if the widget state matches \fIstatespec\fR
+and 0 otherwise\&.
 If \fIscript\fR is specified, it is evaluated as a Tcl script if the widget state matches \fIstatespec\fR\&.
 .TP
 exw state \fIpathName\fR \fIstatespec\fR
 Modifies the widget state\&.
 \fIstatespec\fR can be either normal or disabled\&.
-Internally, this command calls the \fBtext\fR widget's \fBconfigure\fR command, and the result
-of that is returned, be it an empty string or otherwise\&.
+Functionally, this is the same as \fIpathName\fR\&.text configure -state \fIstatespec\fR\&.
+.TP
+\fIidentifier\fR cmd ?args\&.\&.\&.?
+As mentioned above, specifiying \fIidentifier\fR at the creation of the text widget will result
+in the creation of this command\&.
+It works as a shortcut to the widget commands so the programmer doesn't have to recall the window path all the time\&.
 .PP
+.SH EXAMPLES
+.PP
+Create a textbox with a vertical scrollbar using the identifier \fITEXTBOX\fR\&.
+.CS
+
+
+exw text -scrolly \&.textbox TEXTBOX -state normal
+exw pack \&.textbox
+
+# Commands with identifier
+TEXTBOX instate normal {puts normal}
+TEXTBOX clear
+TEXTBOX state disabled
+
+# Alternate method
+exw subcmd \&.textbox instate normal {puts normal}
+exw subcmd \&.textbox clear
+exw state \&.textbox disabled
+
+.CE
 .SH COPYRIGHT
 .nf
 Copyright (c) John Russell 2021

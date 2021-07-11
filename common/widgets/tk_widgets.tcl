@@ -1,4 +1,4 @@
-package provide tk_widgets 0.3.0
+package provide tk_widgets 0.4
 
 set srcfile [lindex [dict get [info frame -1] cmd] 1]
 set dir [file dirname $srcfile]
@@ -16,8 +16,8 @@ source [file join $dir tk_subcmd.tcl]
 namespace eval exWidgets {
     variable packinfo
     variable alias
-
     variable commands {tk_entry tk_pack tk_text tk_state tk_subcmd}
+    variable identifiers
 
     namespace export -clear tk_entry tk_pack
     namespace ensemble create -command ::exw \
@@ -139,4 +139,47 @@ proc ::exWidgets::parseOptions {dataVar specs argVar} {
     } ; # end while
 
     return
+}
+
+proc ::exWidgets::__set_cmd_and_destroy {class pathname cmd} {
+    if {$cmd eq ""} return
+
+    # Script that executes when the widget is destroyed
+    set scriptWhenDestroyed [list]
+
+    set temp [namespace code {unset identifiers($pathname); unset packinfo($pathname)}]
+    lappend scriptWhenDestroyed [subst $temp]
+
+    switch -exact $class {
+    text {
+        # Text widget command
+        set cmdname "::$cmd"
+        set args {subcmd args}
+        set body {
+            switch -exact \$subcmd {
+                state {
+                    tailcall exw state $pathname {*}$args
+                }
+                default {
+                    return [exw subcmd $pathname \$subcmd {*}\$args]
+                }
+            }
+        }
+        proc $cmdname $args [subst -nocommand $body]
+        lappend scriptWhenDestroyed [list rename $cmdname ""]
+    }
+
+    entry {
+        # Entry widget command
+        set cmdname "::$cmd"
+        set args {subcmd args}
+        set body {
+            return [exw subcmd $pathname \$subcmd {*}\$args]
+        }
+        proc $cmdname $args [subst -nocommand $body]
+        lappend scriptWhenDestroyed [list rename $cmdname ""]
+    }
+    }
+
+    bind $pathname <Destroy> [join $scriptWhenDestroyed "\n"]
 }
