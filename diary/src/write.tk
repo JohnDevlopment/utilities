@@ -50,8 +50,6 @@ settemp scripts [list \
         # File modified
         set FileModified 1
         printStatusbar 0 "Entry Saved" 2000
-
-        exw subcmd .nb.frame1.text instate
     } else {
         displayError "The text field is empty."
     }
