@@ -146,7 +146,7 @@ proc fileCommand {op args} {
 
             set FileModified 0
             printStatusbar 1 "File saved" 1500
-            printStatusbar 0 [pwd]
+            printStatusbar 2 [pwd]
         }
     }
 

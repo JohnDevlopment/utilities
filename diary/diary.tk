@@ -93,4 +93,4 @@ place .menuButtons -x 0 -y 0 -relwidth 1 -relheight 0.05
     settemp children [winfo children .menuButtons]
     pack {*}$children -side left -anchor n
 
-bind . <3> {puts [wm geometry .] ; puts [.nb.frame1.statusbar sashpos 0]}
+#bind . <3> {puts [wm geometry .]}

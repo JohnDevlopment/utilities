@@ -1,26 +1,26 @@
 .nb add [ttk::frame .nb.frame1] -text Write -sticky news
 
-settemp frame .nb.frame1
+ttk::label .nb.frame1.date
 
-ttk::label $frame.date
-
-exw text -wrap word -scrolly $frame.text TEXTBOX -state disabled -undo 1
-bind $frame.text.text <<Modified>> {
+exw text -wrap word -scrolly .nb.frame1.text TEXTBOX -state disabled -undo 1
+bind .nb.frame1.text.text <<Modified>> {
     set EntryModified [%W edit modified]
 }
-ttk::combobox $frame.entries -textvariable SELECTED_ENTRY -state readonly
+ttk::combobox .nb.frame1.entries -textvariable SELECTED_ENTRY -state readonly
 set SELECTED_ENTRY ""
-$frame.entries state disabled
-bind $frame.entries <<ComboboxSelected>> {
+.nb.frame1.entries state disabled
+bind .nb.frame1.entries <<ComboboxSelected>> {
     settemp date [%W get]
     set CurrentEntry [clock scan $date -format $DateFormat]
     exw subcmd .nb.frame1.text clear
     exw subcmd .nb.frame1.text insert 1.0 [dict get $FileData $CurrentEntry]
     exw subcmd .nb.frame1.text edit modified 0
     exw subcmd .nb.frame1.text edit reset
+    selection clear -displayof .
+    focus .nb.frame1.text.text
 }
 
-ttk::frame $frame.buttons
+ttk::frame .nb.frame1.buttons
 
 settemp scripts [list \
 {
@@ -75,32 +75,32 @@ settemp scripts [list \
 settemp w
 settemp s
 foreach w {new save delete} s $scripts {
-    append s [subst {
-        if {\[exw subcmd $frame.text instate normal]} {
-            focus $frame.text.text
+    append s {
+        if {[exw subcmd .nb.frame1.text instate normal]} {
+            focus .nb.frame1.text.text
         } else {
-            focus $frame
+            focus .nb.frame1
         }
-    }]
+    }
 
-    ttk::button $frame.buttons.$w -text [string totitle $w] -command $s -state disabled
+    ttk::button .nb.frame1.buttons.$w -text [string totitle $w] -command $s -state disabled
 }
 
 # Paned window
-ttk::panedwindow $frame.statusbar -orient horizontal
-$frame.statusbar add [ttk::label $frame.statusbar.entryMod -relief sunken] \
+ttk::panedwindow .nb.frame1.statusbar -orient horizontal
+.nb.frame1.statusbar add [ttk::label .nb.frame1.statusbar.entryMod -relief sunken] \
+    -weight 1
+.nb.frame1.statusbar add [ttk::label .nb.frame1.statusbar.fileMod -relief sunken] \
+    -weight 1
+.nb.frame1.statusbar add [ttk::label .nb.frame1.statusbar.dir -relief sunken] \
     -weight 2
-$frame.statusbar add [ttk::label $frame.statusbar.fileMod -relief sunken] \
-    -weight 2
-$frame.statusbar add [ttk::label $frame.statusbar.dir -relief sunken] \
-    -weight 3
 after idle {printStatusbar 2 [pwd]}
 
-pack $frame.date $frame.entries -fill x -side top -anchor n
-exw pack $frame.text -before $frame.entries -fill both -side top -anchor n
+pack .nb.frame1.date .nb.frame1.entries -fill x -side top -anchor n
+exw pack .nb.frame1.text -before .nb.frame1.entries -fill both -side top -anchor n -expand 1
 
-pack $frame.buttons -fill x -side top
-    settemp children [winfo children $frame.buttons]
+pack .nb.frame1.buttons -fill x -side top -anchor n
+    settemp children [winfo children .nb.frame1.buttons]
     pack {*}$children -side left -fill x -expand 1 -anchor n
 
-pack $frame.statusbar -fill x -side top
+pack .nb.frame1.statusbar -fill x -side top
