@@ -34,8 +34,13 @@ settemp scripts [list \
 {
     # Save entry
 
-    if {[exw subcmd .nb.frame1.text instate disabled]} {
-        return [displayError "The text field is disabled."]
+    if {[catch {expr "$CurrentEntry + 1"}]} {
+        return [displayError "You are attempting to save an entry with no date" -title "Input Error"]
+    }
+
+    #if {[exw subcmd .nb.frame1.text instate disabled]} {
+    if {[TEXTBOX instate disabled]} {
+        return [displayError "The text field is disabled." -title "Input Error"]
     }
 
     settemp text [exw subcmd .nb.frame1.text get 1.0 end]
