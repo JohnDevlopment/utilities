@@ -98,7 +98,6 @@ ttk::panedwindow .nb.frame1.statusbar -orient horizontal
     -weight 1
 .nb.frame1.statusbar add [ttk::label .nb.frame1.statusbar.dir -relief sunken] \
     -weight 2
-after idle {printStatusbar 2 [pwd]}
 
 pack .nb.frame1.date .nb.frame1.entries -fill x -side top -anchor n
 exw pack .nb.frame1.text -before .nb.frame1.entries -fill both -side top -anchor n -expand 1

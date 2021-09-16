@@ -4,10 +4,15 @@ package require utilities
 package require tk_widgets
 package require json
 package require json::write
+package require inifile
+package require jdebug
 
 const RootDir [file dirname [file normalize $argv0]]
 const DateFormat "%D %l:%M:%S %p"
 const TitleBase Diary
+
+jdebug::on
+jdebug::level warn
 
 wm title . Diary
 wm protocol . WM_DELETE_WINDOW {
@@ -32,6 +37,9 @@ wm protocol . WM_DELETE_WINDOW {
             return
         }
     }
+    if {[catch saveConfig err]} {
+        displayError "Error returned from saveConfig" -detail $err
+    }
     exit
 }
 wm minsize . 663 558
@@ -44,6 +52,7 @@ settemp t_srcdir [file join $RootDir src]
 source [file join $t_srcdir globals.tcl]
 source [file join $t_srcdir proc.tcl]
 source [file join $t_srcdir write.tk]
+source [file join $t_srcdir options.tk]
 
 # Menu buttons: they go *before* the notebook
 ttk::frame .menuButtons
@@ -94,3 +103,5 @@ place .menuButtons -x 0 -y 0 -relwidth 1 -relheight 0.05
     pack {*}$children -side left -anchor n
 
 #bind . <3> {puts [wm geometry .]}
+
+after idle openConfig

@@ -1,0 +1,15 @@
+.nb add [ttk::frame .nb.frame2] -text Options -sticky news
+
+pack [ttk::frame .nb.frame2.subframe1] -fill x
+
+exw entry -label Directory .nb.frame2.subframe1.directory -state readonly
+
+ttk::button .nb.frame2.subframe1.browse -text "Browse..." -command {
+    settemp t_dir [tk_chooseDirectory -initialdir $CurrentDir -parent . -title "Choose Directory"]
+    if {$t_dir ne ""} {
+        set CurrentDir $t_dir
+    }
+}
+
+exw pack .nb.frame2.subframe1.directory -side left -anchor n
+pack .nb.frame2.subframe1.browse -side left -anchor n

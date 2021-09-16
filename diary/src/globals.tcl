@@ -1,5 +1,7 @@
+set ConfigFile ""
 set CurrentFile ""
 set CurrentEntry ""
+set CurrentDir [pwd]
 set FileData ""
 set FileModified 0
 set EntryModified 0
@@ -45,3 +47,8 @@ trace add variable FileData write [lambda {name n op} {
 
 trace add variable FileModified write processFlag
 trace add variable EntryModified write processFlag
+trace add variable CurrentDir write processFlag
+
+if {! [info exists env(DIARY_CONFIG_PATH)]} {
+    set env(DIARY_CONFIG_PATH) "/usr/local/etc/diary:$env(HOME)/.config/diary"
+}
