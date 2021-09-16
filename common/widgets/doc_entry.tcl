@@ -52,6 +52,12 @@ The options to the left of [arg pathName] shall be one or more of the options li
 The options to the right can be any of the valid options for [widget ttk::entry].
 If this command succeeds [arg pathName] is returned.
 
+[call exw state [arg pathName] [arg statespec]]
+Modify or inquire widget state.
+If stateSpec is present, sets the widget state: for each flag in stateSpec, sets the corresponding
+flag or clears it if prefixed by an exclamation point. (Source: https://tcl.tk/man/tcl8.6/TkCmd/ttk_widget.htm#M21)
+Functionally, this is the same as [concat [arg pathName].text configure -state [arg statespec]].
+
 [call exw subcmd [arg pathName] [arg cmd] [opt args...]]
 This lets you access any of the entry's widget commands.
 This command is equivelent to [concat [arg pathName].entry [arg cmd] [opt args...]].
