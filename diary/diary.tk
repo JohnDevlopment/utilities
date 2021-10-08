@@ -11,8 +11,12 @@ const RootDir [file dirname [file normalize $argv0]]
 const DateFormat "%D %l:%M:%S %p"
 const TitleBase Diary
 
+if {! [info exists env(DIARY_TK_LOG_LEVEL)]} {
+    set env(DIARY_TK_Log_LEVEL) warn
+}
+
 jdebug::on
-jdebug::level warn
+jdebug::level $env(DIARY_TK_LOG_LEVEL)
 
 wm title . Diary
 wm protocol . WM_DELETE_WINDOW {

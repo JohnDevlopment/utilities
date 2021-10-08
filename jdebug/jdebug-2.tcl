@@ -60,7 +60,6 @@ proc ::jdebug::on {} {
     level all
     header ""
     trailer ""
-    puts "Debug mode enabled"
 }
 
 proc ::jdebug::off {} {variable enabled 0}
