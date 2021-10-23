@@ -183,6 +183,7 @@ namespace eval ::deletequeue {
         variable vars
         variable afterid ""
 
+        # TODO: could we concatenate a string to unset these variables in one call?
         foreach v $vars {unset -nocomplain $v}
         set vars ""
     }

@@ -1,6 +1,6 @@
 [manpage_begin exw_entry n ""]
 [titledesc "Create and manipulate expanded one-line 'entry' widgets"]
-[include doc_inc.tcl]
+[include ../../inc/widgets-meta.tcl]
 [description]
 The command [cmd "exw entry"] creates a new window (given by the [arg pathName] argument) and makes
 it an expanded [widget ttk::entry] widget.

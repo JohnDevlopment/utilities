@@ -2,7 +2,7 @@
 '\" Generated from file '' by tcllib/doctools with format 'nroff'
 '\" Copyright (c) John Russell 2021
 '\"
-.TH "exw_entry" n   "Expanded Tk Widgets"
+.TH "utilities" n 1\&.0  "Tcl Utility Functions"
 .\" The -*- nroff -*- definitions below are for supplemental macros used
 .\" in Tcl/Tk manual entries.
 .\"
@@ -272,101 +272,86 @@ Database Class:	\\fB\\$3\\fR
 ..
 .BS
 .SH NAME
-exw_entry \- Create and manipulate expanded one-line 'entry' widgets
+utilities \- Tcl Utility Functions
 .SH SYNOPSIS
-package require \fBtk_widgets  ?0\&.4?\fR
+package require \fButilities  ?1\&.0?\fR
 .sp
-exw entry ?\fIoptions\fR? \fIpathName\fR ?\fIidentifier\fR? ?\fIoptions\fR?
+assert \fIexpression\fR ?\fImessage\fR?
 .sp
-exw state \fIpathName\fR \fIstatespec\fR
+const \fIname\fR \fIvalue\fR
 .sp
-exw subcmd \fIpathName\fR \fIcmd\fR ?args\&.\&.\&.?
+deref \fIvar\fR
 .sp
-\fIidentifier\fR \fIcmd\fR ?args\&.\&.\&.?
+do \fIbody\fR while \fIcond\fR
+.sp
+lambda \fIargs\fR \fIbody\fR
+.sp
+lremove \fIlistVar\fR \fIbegin\fR ?\fIend\fR?
+.sp
+pincr \fIvar\fR ?\fIi\fR?
+.sp
+random integer ?\fImin\fR? \fImax\fR
+.sp
+random string \fIlength\fR
+.sp
+settemp \fIvar\fR ?\fIvalue\fR?
 .sp
 .BE
 .SH DESCRIPTION
-The command \fBexw entry\fR creates a new window (given by the \fIpathName\fR argument) and makes
-it an expanded \fBttk::entry\fR widget\&.
-Options, listed in the section below, can be specified on the commandline to the left of \fIpathName\fR\&.
-Options to the right of \fIpathName\fR are forwarded as-is to the \fBttk::entry\fR command\&.
-(See the related documentation for details\&.)
-The path to the newly created window is returned\&.
-At the time this command is invoked \fIpathName\fR must not already exist, yet its parent must exist\&.
+This package contains a series of handy utility functions that may aid in the development of
+Tcl-based applications\&.
+The following functions are exported from the package\&.
+.TP
+assert \fIexpression\fR ?\fImessage\fR?
+This works like the typical assertion you might have seen in other languages\&.
+If \fIexpression\fR evaluates to false, then an error is emitted\&.
+You can tell assert to print \fImessage\fR instead of the default "assertion failed" message\&.
+.TP
+const \fIname\fR \fIvalue\fR
+Creates a new variable by the name \fIname\fR and sets its value to \fIvalue\fR\&.
+At the time this function is called, \fIname\fR cannot already exist\&.
+Returns \fIvalue\fR\&.
+.sp
+This function creates a readonly variable: once its value is set upon creation, it cannot be changed
+again\&. Any attempt to do so will result in an error\&.
+.TP
+deref \fIvar\fR
+Returns the value of the variable \fIvar\fR\&.
+.TP
+do \fIbody\fR while \fIcond\fR
+Implements a do-while loop\&. Evaluates the script \fIbody\fR once and then continues to do so
+while \fIcond\fR evaluates to true\&.
+.TP
+lambda \fIargs\fR \fIbody\fR
+Returns an apply lambda function with the arguments \fIargs\fR and \fIbody\fR as the function body\&.
+.TP
+lremove \fIlistVar\fR \fIbegin\fR ?\fIend\fR?
+Removes one or more elements from a list found in the variable \fIlistVar\fR\&.
+\fIbegin\fR and \fIend\fR are index values that specify the start and end of a range of elements to remove\&.
+Indices are interpreted in the same manner as \fBlreplace\fR\&.
+.sp
+Returns an empty string\&.
+.TP
+pincr \fIvar\fR ?\fIi\fR?
+Implements a post-fix increment operator in Tcl\&.
+Increments the numeric value in \fIvar\fR by the amount specified by \fIi\fR\&.
+If \fIi\fR is not provided, then 1 is used as the default\&.
+.sp
+The return value is the value of \fIvar\fR prior to the increment\&.
+.TP
+random integer ?\fImin\fR? \fImax\fR
+Returns a random integer between \fImin\fR and \fImax\fR\&.
+If \fImin\fR is omitted, it defaults to zero\&.
+.TP
+random string \fIlength\fR
+Returns a randomly generated string of \fIlength\fR characters\&.
+The string will contain characters between a-z (upper and lowercase) and an underscore\&.
+.TP
+settemp \fIvar\fR ?\fIvalue\fR?
+Creates a temporary value that deletes itself at idle time\&.
+Internally, \fIvar\fR gets added to a queue that is processed at the start of the next event loop,
+using \fBafter idle\fR\&.
 .PP
-If \fIidentifier\fR is specified a command of the same name is created\&.
-At the time this command is invoked, \fIidentifier\fR must not already exist as a command\&.
-\fIidentifier\fR cannot have any hyphens or periods\&.
-See the section \fBWIDGET COMMAND\fR for a complete description of this command\&.
-.SH "WIDGET-SPECIFIC OPTIONS"
-The options listed below are only recognized when put to the left of \fIpathName\fR\&.
-They are write-only options that can be specified only at the creation of this widget\&.
-.TP
-\fB-maxlen\fR
-If this option is provided, it specifies the maximum length of the text inside the entry\&.
-It must be greater than zero to take effect\&.
-When active, it causes the entry to reject the adding of characters when the length of the current
-string is greater than or equal to this option\&.
-If this option is left out or is an empty string it defaults to zero\&.
-.TP
-\fB-label\fR \fItext\fR
-If this option is provided, it specifies a textual string to display in a label to the left of the
-entry widget\&.
-If the option is left out or is an empty string, no label is displayed\&.
-.TP
-\fB-scrollx\fR
-When this option is present, a horizontal scrollbar is displayed below the entry widget\&.
-The scrollbar is setup to scroll the entry widget when the textual data inside it gets too big\&.
-.TP
-\fB-clearbutton\fR
-If this option is present, a button is display inside the right edge of the entry widget that,
-when pressed, clears all of the text inside the entry\&.
-.PP
-.SH "WIDGET COMMAND"
-After the entry widget is created, a number of subcommands are available\&.
-.TP
-exw entry ?\fIoptions\fR? \fIpathName\fR ?\fIidentifier\fR? ?\fIoptions\fR?
-This command creates a new extended entry widget located at \fIpathName\fR\&.
-The options to the left of \fIpathName\fR shall be one or more of the options listed above\&.
-The options to the right can be any of the valid options for \fBttk::entry\fR\&.
-If this command succeeds \fIpathName\fR is returned\&.
-.TP
-exw state \fIpathName\fR \fIstatespec\fR
-Modify or inquire widget state\&.
-If stateSpec is present, sets the widget state: for each flag in stateSpec, sets the corresponding
-flag or clears it if prefixed by an exclamation point\&. (Source: https://tcl\&.tk/man/tcl8\&.6/TkCmd/ttk_widget\&.htm#M21)
-Functionally, this is the same as \fIpathName\fR\&.text configure -state \fIstatespec\fR\&.
-.TP
-exw subcmd \fIpathName\fR \fIcmd\fR ?args\&.\&.\&.?
-This lets you access any of the entry's widget commands\&.
-This command is equivelent to \fIpathName\fR\&.entry \fIcmd\fR ?args\&.\&.\&.?\&.
-.TP
-\fIidentifier\fR \fIcmd\fR ?args\&.\&.\&.?
-Use this command as an alternative to \fBexw subcmd\fR\&.
-\fIidentifier\fR forwards its arguments to the command \fIpathName\fR\&.
-.PP
-.SH EXAMPLES
-.PP
-Create an entry with a max length of thirty characters\&.
-No identifier is specified\&.
-.CS
-
-
-exw entry -maxlen 30 \&.without
-exw pack \&.without
-exw subcmd \&.without insert end "I am a good programmer!"
-
-.CE
-.PP
-Creates an entry with the identifier \fIENTRY\fR\&.
-.CS
-
-
-exw entry \&.with ENTRY
-exw pack \&.with
-ENTRY insert end "I am a good programmer!"
-
-.CE
 .SH COPYRIGHT
 .nf
 Copyright (c) John Russell 2021

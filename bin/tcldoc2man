@@ -1,0 +1,83 @@
+#!/usr/bin/env tclsh
+package require doctools
+package require jdebug
+
+proc usage {} {
+    global argv0
+    set base [file tail $argv0]
+
+    return "usage: $base \[-h|-?|--help]\n       $base input output"
+}
+
+set opt [lindex $argv 0]
+
+switch [llength $argv] {
+    1 {
+        if {$opt in {-h --help -?}} {
+            puts stderr "[usage]\n[doctools::help]"
+            return
+        } else {
+            puts stderr "unknown option \"$opt\"\n[usage]"
+            exit 1
+        }
+    }
+    2 {
+        lassign $argv input output
+        set input [file normalize $input]
+        set output [file normalize $output]
+    }
+    3 {
+        if {$opt ne "-d"} {
+            puts stderr "unknown option \"$opt\"\n[usage]"
+            exit 1
+        }
+        lassign $argv opt input output
+        set input [file normalize $input]
+        set output [file normalize $output]
+        jdebug::on
+        jdebug::level debug
+    }
+    default {
+        set base [file tail $argv0]
+        puts stderr "wrong # args\n[usage]"
+        exit 1
+    }
+}
+
+doctools::new mandoc -format nroff
+
+# Check if the output file exists
+if {[file exists $output]} {
+    jdebug::print debug "$output already exists"
+    jdebug::print debug "$input modified: [file mtime $input]"
+    jdebug::print debug "$output modified: [file mtime $output]"
+
+    # If it exists, check if the source file is older than the output file
+    # If so, then don't do anything
+    if {[file mtime $input] <= [file mtime $output]} {
+        jdebug::print info "input file is older than the output file, so the output file is up to date"
+        puts "output file is up to date...nothing to do"
+        return
+    }
+}
+
+# Input file
+jdebug::print debug "opening $input for reading"
+set id [open $input r]
+try {
+    set data [read $id]
+} finally {
+    close $id
+}
+
+# Output file
+jdebug::print debug "opening $output for writing"
+set mandata [mandoc format $data]
+set id [open $output w]
+try {
+    puts $id $mandata
+} finally {
+    close $id
+}
+
+puts "converted $input to a man page: $output"

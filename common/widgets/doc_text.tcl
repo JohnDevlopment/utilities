@@ -1,6 +1,6 @@
 [manpage_begin exw_text n ""]
 [titledesc "Create and manipulate expanded multi-line 'text' widgets"]
-[include doc_inc.tcl]
+[include ../../inc/widgets-meta.tcl]
 [description]
 The [cmd "exw text"] command creates a window (provided by the [arg pathName] argument) and makes
 it into an extended [widget text] widget.
