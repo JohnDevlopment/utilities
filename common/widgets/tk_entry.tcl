@@ -5,6 +5,7 @@ proc ::exWidgets::tk_entry {args} {
     set specs {
         {maxlen.arg 0}
         {label.arg ""}
+        {allowedchars.arg ""}
         scrollx
         clearbutton
     }
@@ -76,6 +77,42 @@ proc ::exWidgets::tk_entry {args} {
     set vcmd [list]
     set invcmd [list]
 
+    set invcmd {
+        if {$data(maxlen) > 0 && [string length [$pathname.entry get]] > $data(maxlen)} {
+            $pathname.entry delete $data(maxlen) end
+        }
+    }
+
+    # -maxlen is not a valid integer string
+    if {$data(maxlen) eq ""} {
+        set data(maxlen) 0
+    } elseif {! [regexp {^[0-9]+$} $data(maxlen)]} {
+        set data(maxlen) 0
+    }
+
+    # Constrain entry text
+
+    set tlist [list]
+
+    # Constrain entry text to a certain length
+    if {$data(maxlen) > 0} {
+        lappend tlist {if {[string length %s] >= $data(maxlen)} {return 0}}
+    }
+
+    # Constrain entry text to certain characters
+    if {$data(allowedchars) ne ""} {
+        lappend tlist {
+            if {! [regexp {$data(allowedchars)} %S]} {return 0}
+        }
+    }
+
+    if {[ llength $tlist ] > 0} {
+        set tlist [join $tlist "\n"]
+        lappend vcmd "if {%d == 1 || %d == -1} {$tlist}"
+    }
+
+    unset tlist
+
     # Enable/disable the clear button depending on there being text
     if {$data(clearbutton)} {
         lappend vcmd {
@@ -83,31 +120,6 @@ proc ::exWidgets::tk_entry {args} {
                 $pathname.clear state !disabled
             } else {
                 $pathname.clear state disabled
-            }
-        }
-    }
-
-    set invcmd {
-        if {[string length [$pathname.entry get]] > $data(maxlen)} {
-            $pathname.entry delete $data(maxlen) end
-        }
-    }
-
-    # Empty string passed as maxlen
-    if {$data(maxlen) eq ""} {set data(maxlen) 0}
-
-    # -maxlen is not a valid integer string
-    if {! [regexp {[0-9]+} $data(maxlen)]} {
-        # TODO: delete the line under this
-        puts stderr "invalid \"-maxlen\" value: $data(maxlen)"
-        set data(maxlen) 0
-    }
-
-    # Constrain entry text to a certain length
-    if {$data(maxlen) > 0} {
-        lappend vcmd {
-            if {%d == 1 || %d == -1} {
-                if {[string length %s] >= $data(maxlen)} {return 0}
             }
         }
     }

@@ -21,25 +21,31 @@ The options listed below are only recognized when put to the left of [arg pathNa
 They are write-only options that can be specified only at the creation of this widget.
 
 [list_begin opt]
-[opt_def "-maxlen"]
-If this option is provided, it specifies the maximum length of the text inside the entry.
-It must be greater than zero to take effect.
-When active, it causes the entry to reject the adding of characters when the length of the current
-string is greater than or equal to this option.
-If this option is left out or is an empty string it defaults to zero.
+[opt_def -allowedchars]
+If this option is present, it defines a regular expression which specifies what characters are
+allowed to be inserted.
+It is matched against each character as it is inserted, so the regular expression should be written
+with that in mind.
+
+[opt_def -clearbutton]
+If this option is present, a button is display inside the right edge of the entry widget that,
+when pressed, clears all of the text inside the entry.
 
 [opt_def -label [arg text]]
 If this option is provided, it specifies a textual string to display in a label to the left of the
 entry widget.
 If the option is left out or is an empty string, no label is displayed.
 
+[opt_def -maxlen]
+If this option is provided, it specifies the maximum length of the text inside the entry.
+It must be greater than zero to take effect.
+When active, it causes the entry to reject the adding of characters when the length of the current
+string is greater than or equal to this option.
+If this option is left out or is an empty string it defaults to zero.
+
 [opt_def -scrollx]
 When this option is present, a horizontal scrollbar is displayed below the entry widget.
 The scrollbar is setup to scroll the entry widget when the textual data inside it gets too big.
-
-[opt_def -clearbutton]
-If this option is present, a button is display inside the right edge of the entry widget that,
-when pressed, clears all of the text inside the entry.
 [list_end]
 
 [section "widget command"]
