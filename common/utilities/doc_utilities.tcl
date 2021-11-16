@@ -12,6 +12,10 @@ This works like the typical assertion you might have seen in other languages.
 If [arg expression] evaluates to false, then an error is emitted.
 You can tell assert to print [arg message] instead of the default "assertion failed" message.
 
+[call bool [arg value]]
+Returns 1 if [arg value] is true or 0 if false, or vice versa.
+Used for converting between boolean values for mainly logging purposes.
+
 [call const [arg name] [arg value]]
 Creates a new variable by the name [arg name] and sets its value to [arg value].
 At the time this function is called, [arg name] cannot already exist.

@@ -278,6 +278,8 @@ package require \fButilities  ?1\&.0?\fR
 .sp
 assert \fIexpression\fR ?\fImessage\fR?
 .sp
+bool \fIvalue\fR
+.sp
 const \fIname\fR \fIvalue\fR
 .sp
 deref \fIvar\fR
@@ -306,6 +308,10 @@ assert \fIexpression\fR ?\fImessage\fR?
 This works like the typical assertion you might have seen in other languages\&.
 If \fIexpression\fR evaluates to false, then an error is emitted\&.
 You can tell assert to print \fImessage\fR instead of the default "assertion failed" message\&.
+.TP
+bool \fIvalue\fR
+Returns 1 if \fIvalue\fR is true or 0 if false, or vice versa\&.
+Used for converting between boolean values for mainly logging purposes\&.
 .TP
 const \fIname\fR \fIvalue\fR
 Creates a new variable by the name \fIname\fR and sets its value to \fIvalue\fR\&.

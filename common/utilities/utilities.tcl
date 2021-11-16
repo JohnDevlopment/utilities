@@ -61,6 +61,48 @@ proc assert {exp {msg ""}} {
     return
 }
 
+proc bool {value} {
+    #if {[string is integer $value]} {
+    #    if {$value == 1 || $value == 0} {
+    #        return $value
+    #    } else {
+    #        return -code error "Invalid integer $value, should be 0 or 1"
+    #    }
+    #} else {
+    #    switch -exact [string tolower $value] {
+    #        true {
+    #            return 1
+    #        }
+    #        false {
+    #            return 0
+    #        }
+    #        default {
+    #            return -code error "Invalid string \"$value\", must be either true or false"
+    #        }
+    #    }
+    #}
+    switch -exact [string tolower $value] {
+        true {
+            return 1
+        }
+        false {
+            return 0
+        }
+        1 {
+            return true
+        }
+        0 {
+            return false
+        }
+        default {
+            #return -code error "Invalid string \"$value\", must be either true (1) or false (0), or its integer equivelent"
+            return 0
+        }
+    }
+
+    return -code error "FATAL: Unreachable code encountered"
+}
+
 # Defines a readonly variable. Any subsequent attempts to
 # modify the variable result in an error.
 proc const {varName value} {
