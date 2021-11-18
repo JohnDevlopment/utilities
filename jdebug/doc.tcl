@@ -26,6 +26,17 @@ Call this function to set the loglevel.
 Prints the argument [arg msg] to the loglevel specified by [arg tag].
 If [arg tag] is one of the levels above the current loglevel, this function has no effect.
 For more information, see [sectref LOGLEVELS].
+
+[call ::jdebug::header [arg text]]
+Set or clear the header of each print statement.
+The header is displayed right before the loglevel.
+
+[call ::jdebug::trailer [arg text]]
+Set or clear the trailer of each print statement.
+The trailer is displayed right after the message body.
+
+[call ::jdebug::eval [arg body]]
+Evaluates [arg body] as a Tcl script if [namespace jdebug] is enabled.
 [list_end]
 
 [section loglevels]

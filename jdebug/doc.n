@@ -284,6 +284,12 @@ package require \fBjdebug  2\&.0\&.1\fR
 .sp
 ::jdebug::print \fItag\fR \fImsg\fR
 .sp
+::jdebug::header \fItext\fR
+.sp
+::jdebug::trailer \fItext\fR
+.sp
+::jdebug::eval \fIbody\fR
+.sp
 .BE
 .SH DESCRIPTION
 This man page contains all the public exported functions from the \fBjdebug\fR namespace\&.
@@ -306,6 +312,17 @@ Call this function to set the loglevel\&.
 Prints the argument \fImsg\fR to the loglevel specified by \fItag\fR\&.
 If \fItag\fR is one of the levels above the current loglevel, this function has no effect\&.
 For more information, see \fBLOGLEVELS\fR\&.
+.TP
+::jdebug::header \fItext\fR
+Set or clear the header of each print statement\&.
+The header is displayed right before the loglevel\&.
+.TP
+::jdebug::trailer \fItext\fR
+Set or clear the trailer of each print statement\&.
+The trailer is displayed right after the message body\&.
+.TP
+::jdebug::eval \fIbody\fR
+Evaluates \fIbody\fR as a Tcl script if \fBjdebug\fR is enabled\&.
 .PP
 .SH LOGLEVELS
 \fBjdebug\fR uses standard debugging levels, listed below\&.
