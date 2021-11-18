@@ -6,17 +6,31 @@ package require json
 package require json::write
 package require inifile
 package require jdebug
+#package require cmdline
 
 const RootDir [file dirname [file normalize $argv0]]
 const DateFormat "%D %l:%M:%S %p"
 const TitleBase Diary
 
-if {! [info exists env(DIARY_TK_LOG_LEVEL)]} {
-    set env(DIARY_TK_Log_LEVEL) warn
+settemp t_srcdir [file join $RootDir src]
+source [file join $t_srcdir globals.tcl]
+source [file join $t_srcdir proc.tcl]
+
+
+settemp t_optlist {
+    { debug 0 "Enable debug logging" }
+    { loglevel.arg debug "Set logging level" }
 }
 
-jdebug::on
-jdebug::level $env(DIARY_TK_LOG_LEVEL)
+Options::getoptions $t_optlist options argv
+
+if {$options(debug)} {
+    jdebug::on
+    if {$options(loglevel) eq ""} {
+        error "No loglevel provided"
+    }
+    jdebug::level $options(loglevel)
+}
 
 wm title . Diary
 wm protocol . WM_DELETE_WINDOW {
@@ -51,10 +65,9 @@ wm minsize . 663 558
 #pack [ttk::notebook .nb] -fill both -expand 1
 place [ttk::notebook .nb] -relwidth 1 -relheight 0.95 -x 0 -rely 0.05
 
-settemp t_srcdir [file join $RootDir src]
 
-source [file join $t_srcdir globals.tcl]
-source [file join $t_srcdir proc.tcl]
+
+
 source [file join $t_srcdir write.tk]
 source [file join $t_srcdir options.tk]
 

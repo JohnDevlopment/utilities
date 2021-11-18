@@ -95,8 +95,6 @@ proc ::exWidgets::parseOptions {dataVar specs argVar} {
         }
     }
 
-    set nonargs {}
-
     # Start option processing
     upvar $argVar args
     while {[llength $args] > 0} {
