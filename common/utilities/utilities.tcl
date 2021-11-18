@@ -62,25 +62,6 @@ proc assert {exp {msg ""}} {
 }
 
 proc bool {value} {
-    #if {[string is integer $value]} {
-    #    if {$value == 1 || $value == 0} {
-    #        return $value
-    #    } else {
-    #        return -code error "Invalid integer $value, should be 0 or 1"
-    #    }
-    #} else {
-    #    switch -exact [string tolower $value] {
-    #        true {
-    #            return 1
-    #        }
-    #        false {
-    #            return 0
-    #        }
-    #        default {
-    #            return -code error "Invalid string \"$value\", must be either true or false"
-    #        }
-    #    }
-    #}
     switch -exact [string tolower $value] {
         true {
             return 1
@@ -89,10 +70,7 @@ proc bool {value} {
             return 0
         }
         1 {
-            return true
-        }
-        0 {
-            return false
+            return 1
         }
         default {
             #return -code error "Invalid string \"$value\", must be either true (1) or false (0), or its integer equivelent"
@@ -215,6 +193,17 @@ proc pincr {var {i 1}} {
     return $temp
 }
 
+# Removes the front element of a list and returns it.
+proc popFront {listVar} {
+    upvar $listVar List
+    set result ""
+    if {[llength $List] > 0} {
+        set result [lindex $List 0]
+        set List [lreplace $List 0 0]
+    }
+    return $result
+}
+
 namespace eval ::deletequeue {
     variable vars ""
     variable afterid ""
@@ -264,3 +253,108 @@ namespace eval ::deletequeue {
 }
 
 namespace import ::deletequeue::settemp
+
+namespace eval ::Options {}
+
+proc ::Options::getoptions {specs optVar argVar} {
+    if {$optVar eq ""} {
+        return -code error "Provide a variable name!"
+    }
+
+    if {$argVar eq ""} {
+        return -code error "Provide a variable name!"
+    }
+
+    upvar $optVar Data
+
+    if { ! [llength $specs] } {
+        return -code error "Empty specs argument provided"
+    }
+
+    # Build list of allowed options
+    foreach spec $specs {
+        set opt [lindex $spec 0]
+        set optbase [regsub {([a-zA-Z0-9]*)\.arg} $opt {\1}]
+        set optarg [lindex $spec 1]
+
+        if {[ regexp {.*\.arg} $opt ]} {
+            # Option with argument
+            set spectype($optbase) arg
+            set Data($optbase) $optarg
+        } else {
+            # Boolean flag
+            set spectype($optbase) bool
+            set Data($optbase) 0
+        }
+    }
+
+    upvar $argVar args
+
+    set specnames [array names spectype]
+
+    set derefArray [lambda {name index} {
+        upvar $name Array
+        return $Array($index)
+    }]
+
+    while {[llength $args] > 0} {
+        set opt [popFront args]
+
+        if {[string first - $opt] == 0} {
+            # Found an option
+
+            set opt2 [string range $opt 1 end]
+            if {$opt2 in $specnames} {
+                # Parse option
+
+                if {[eval $derefArray spectype $opt2] eq "arg"} {
+                    # Expects an argument
+
+                    if {! [llength $args]} {
+                        return -code error -errorcode [list TCL MISSING PARAM $opt2] \
+                            "Missing argument for option '-$opt2'"
+                    }
+
+                    set optarg [popFront args]
+                } else {
+                    # Boolean flag
+                    set optarg 1
+                }
+
+                set Data($opt2) $optarg
+            } else {
+                # Invalid option
+                return -code error -errorcode [list TCL INVALID PARAM $opt2] \
+                    "Unknown option '-$opt2'"
+            }
+        } else {
+            # First nonoption reached
+
+            set args [list $opt {*}$args]
+            break
+        }
+    }
+
+    return
+}
+
+proc ::Options::valid {name specs} {
+    set i 1
+    set length [llength $specs]
+    set msg ""
+    set sep ""
+
+    foreach spec $specs {
+        set opt [regsub {([a-zA-Z0-9]*)\.arg} [lindex $spec 0] {\1}]
+        set msg "$msg$sep-$opt"
+        incr i
+        if {$i <= $length} {
+            set sep ", "
+            if {$i == $length} {append sep "or "}
+        } else {
+            set sep ""
+        }
+    }
+
+    return $msg
+}
