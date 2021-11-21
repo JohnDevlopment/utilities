@@ -13,7 +13,7 @@ If [arg expression] evaluates to false, then an error is emitted.
 You can tell assert to print [arg message] instead of the default "assertion failed" message.
 
 [call bool [arg value]]
-Returns 1 if [arg value] is true or 0 if false, or vice versa.
+Returns 1 if [arg value] evaluates to true or 0 otherwise.
 Used for converting between boolean values for mainly logging purposes.
 
 [call const [arg name] [arg value]]

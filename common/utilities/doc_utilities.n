@@ -310,7 +310,7 @@ If \fIexpression\fR evaluates to false, then an error is emitted\&.
 You can tell assert to print \fImessage\fR instead of the default "assertion failed" message\&.
 .TP
 bool \fIvalue\fR
-Returns 1 if \fIvalue\fR is true or 0 if false, or vice versa\&.
+Returns 1 if \fIvalue\fR evaluates to true or 0 otherwise\&.
 Used for converting between boolean values for mainly logging purposes\&.
 .TP
 const \fIname\fR \fIvalue\fR
