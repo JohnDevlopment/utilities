@@ -1,11 +1,14 @@
 ##################################################
 # Widget Mapper
+# Version 0.1-alpha
+# Created by John Russell
 ##################################################
+package provide widgetmapper 1.0a0
 
 package require utilities
 package require jdebug
 
-const WidgetMapperRecursionLimit 10
+const WidgetMapperRecursionLimit 100
 
 namespace eval WidgetMapper {
     variable level
@@ -38,7 +41,7 @@ namespace eval WidgetMapper {
         return $widgetreturn
     }
 
-    proc map_widgets {start args} {
+    proc map_widgets {args} {
         variable map_options; array set map_options {0 ""}
         variable widgets; array set widgets {0 ""}
         variable level 0
@@ -65,10 +68,11 @@ namespace eval WidgetMapper {
 
         set specs {
             {depth.arg 0}
+            {start.arg .}
         }
         getoptions $specs map_options args
 
-        tailcall _map_children $start $start
+        tailcall _map_children $map_options(start) $map_options(start)
     }
 
     proc _map_children {root widget} {
