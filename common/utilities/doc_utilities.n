@@ -298,6 +298,8 @@ random string \fIlength\fR
 .sp
 settemp \fIvar\fR ?\fIvalue\fR?
 .sp
+getOptions \fIspecs\fR \fIoptVar\fR \fIargvVar\fR
+.sp
 .BE
 .SH DESCRIPTION
 This package contains a series of handy utility functions that may aid in the development of
@@ -357,6 +359,21 @@ settemp \fIvar\fR ?\fIvalue\fR?
 Creates a temporary value that deletes itself at idle time\&.
 Internally, \fIvar\fR gets added to a queue that is processed at the start of the next event loop,
 using \fBafter idle\fR\&.
+.PP
+.PP
+These functions belong to the \fB::Options\fR namespace\&.
+.TP
+getOptions \fIspecs\fR \fIoptVar\fR \fIargvVar\fR
+Processes commandline options according to the rules defined in \fIspecs\fR\&.
+.sp
+\fIspecs\fR is a list of lists containing recognized options, where each element takes the form of {option default}\&.
+If the option doesn't contain any special suffixes, the option is treated as a boolean flag:
+it is set to true if provided, and false otherwise\&.
+If \fIoption\fR ends in "\&.arg", the option expects an argument\&.
+\fIdefault\fR is used as the argument in the case that such option is not provided\&.
+.sp
+The options in \fIargvVar\fR are put into the array variable \fIoptVar\fR, where each index is
+an option and its value is the corresponding argument\&.
 .PP
 .SH COPYRIGHT
 .nf

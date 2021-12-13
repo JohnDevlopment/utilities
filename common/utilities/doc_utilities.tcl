@@ -65,4 +65,24 @@ Internally, [arg var] gets added to a queue that is processed at the start of th
 using [cmd {after idle}].
 [list_end]
 
+[para]
+These functions belong to the [namespace ::Options] namespace.
+
+[list_begin definitions]
+[call getOptions [arg specs] [arg optVar] [arg argvVar]]
+Processes commandline options according to the rules defined in [arg specs].
+
+[para]
+[arg specs] is a list of lists containing recognized options, where each element takes the form of {option default}.
+If the option doesn't contain any special suffixes, the option is treated as a boolean flag:
+it is set to true if provided, and false otherwise.
+If [emph option] ends in ".arg", the option expects an argument.
+[emph default] is used as the argument in the case that such option is not provided.
+
+[para]
+The options in [arg argvVar] are put into the array variable [arg optVar], where each index is
+an option and its value is the corresponding argument.
+
+[list_end]
+
 [manpage_end]
