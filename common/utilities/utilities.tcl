@@ -254,7 +254,9 @@ namespace eval ::deletequeue {
 
 namespace import ::deletequeue::settemp
 
-namespace eval ::Options {}
+namespace eval ::Options {
+    namespace export getoptions valid
+}
 
 proc ::Options::getoptions {specs optVar argVar} {
     if {$optVar eq ""} {
