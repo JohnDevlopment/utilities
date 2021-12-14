@@ -1,48 +1,73 @@
 #!/usr/bin/env tclsh
 package require doctools
 package require jdebug
+package require utilities
 
 proc usage {} {
     global argv0
     set base [file tail $argv0]
+    set indent "       "
 
-    return "usage: $base \[-h|-?|--help]\n       $base input output"
+    proc nextLine {line indent} {
+        upvar msg Msg
+        append Msg "\n${indent}$line"
+        return
+    }
+
+    set msg "usage: $base \[-h|--help]"
+    nextLine "$base \[--debug <level>] input \[output]" $indent
+
+    rename nextLine {}
+
+    return $msg
 }
 
-set opt [lindex $argv 0]
-
-switch [llength $argv] {
-    1 {
-        if {$opt in {-h --help -?}} {
-            puts stderr "[usage]\n[doctools::help]"
-            return
-        } else {
-            puts stderr "unknown option \"$opt\"\n[usage]"
-            exit 1
-        }
-    }
-    2 {
-        lassign $argv input output
-        set input [file normalize $input]
-        set output [file normalize $output]
-    }
-    3 {
-        if {$opt ne "-d"} {
-            puts stderr "unknown option \"$opt\"\n[usage]"
-            exit 1
-        }
-        lassign $argv opt input output
-        set input [file normalize $input]
-        set output [file normalize $output]
-        jdebug::on
-        jdebug::level debug
-    }
-    default {
-        set base [file tail $argv0]
-        puts stderr "wrong # args\n[usage]"
+proc doOrFail {prefix args} {
+    set code [catch $args err]
+    if {$code} {
+        puts stderr "$prefix$err"
         exit 1
     }
 }
+
+# Parse commandline options
+set specs {
+    h -help
+    -debug.arg ""
+}
+Options::getoptions $specs opts argv
+unset specs
+
+# Print help message
+if {$opts(h) || $opts(-help)} {
+    puts stderr "[usage]\n[doctools::help]"
+    exit
+}
+
+# debugging enabled
+if {$opts(-debug) ne ""} {
+    jdebug::on
+    doOrFail "Error: " jdebug::level $opts(-debug)
+}
+
+# input file
+set input [lindex $argv 0]
+if {! [file exists $input]} {
+    puts stderr "invalid file name '$input'"
+    exit 1
+}
+jdebug::print info "input file: $input"
+
+# output file
+set output [lindex $argv 0]
+if {$output eq ""} {
+    set output -
+    jdebug::print info "Printing to standard output"
+} else {
+    jdebug::print info "Output file is '$output'"
+}
+
+unset opts
 
 doctools::new mandoc -format nroff
 
@@ -57,7 +82,7 @@ if {[file exists $output]} {
     if {[file mtime $input] <= [file mtime $output]} {
         jdebug::print info "input file is older than the output file, so the output file is up to date"
         puts "output file is up to date...nothing to do"
-        return
+        exit
     }
 }
 
@@ -73,6 +98,14 @@ try {
 # Output file
 jdebug::print debug "opening $output for writing"
 set mandata [mandoc format $data]
+
+# print to standard output
+if {$output eq "-"} {
+    puts $mandata
+    exit
+}
+
+# print to file
 set id [open $output w]
 try {
     puts $id $mandata
@@ -80,4 +113,4 @@ try {
     close $id
 }
 
-puts "converted $input to a man page: $output"
+puts "converted '$input' to nroff: output saved to '$output'"
