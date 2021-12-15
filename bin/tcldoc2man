@@ -59,7 +59,7 @@ if {! [file exists $input]} {
 jdebug::print info "input file: $input"
 
 # output file
-set output [lindex $argv 0]
+set output [lindex $argv 1]
 if {$output eq ""} {
     set output -
     jdebug::print info "Printing to standard output"
@@ -81,7 +81,7 @@ if {[file exists $output]} {
     # If so, then don't do anything
     if {[file mtime $input] <= [file mtime $output]} {
         jdebug::print info "input file is older than the output file, so the output file is up to date"
-        puts "output file is up to date...nothing to do"
+        puts "output file '$output' is up to date...nothing to do"
         exit
     }
 }
