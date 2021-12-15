@@ -20,7 +20,17 @@ namespace eval WidgetMapper {
 
     namespace import ::Options::getoptions
 
-    proc find {start name} {
+    # find ?-start path? name
+    proc find {args} {
+        getoptions {{start.arg .}} opts args
+
+        if {[llength $args] != 1} {
+            return -code error -errorcode [list TCL WRONGARGS] \
+                "wrong # args: should be WidgetMapper::find ?options? name"
+        }
+
+        # last argument is name to search for
+        set name [lindex $args 0]
         if {[string first . $name] >= 0} {
             return -code error -errorcode [list TCL INVALID PARAM] \
                 "invalid parameter '$name', cannot contain dots"
@@ -34,8 +44,8 @@ namespace eval WidgetMapper {
         array set widgets {0 ""}
         set widgetreturn ""
 
+        set start $opts(start)
         jdebug::print debug "Starting point: $start, looking for $name"
-
         _find $start $start $name
 
         return $widgetreturn
