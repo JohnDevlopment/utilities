@@ -45,7 +45,7 @@ namespace eval WidgetMapper {
         set widgetreturn ""
 
         set start $opts(start)
-        jdebug::print debug "Starting point: $start, looking for $name"
+        _debug_put_line 0 "Starting point: $start, looking for $name"
         _find $start $start $name
 
         return $widgetreturn
@@ -74,7 +74,7 @@ namespace eval WidgetMapper {
         }]
         unset -nocomplain v k opt mapMode
 
-        jdebug::print debug "Mapping: $mapping"
+        _debug_put_line 0 "Mapping: $mapping"
 
         set specs {
             {depth.arg 0}
@@ -118,8 +118,8 @@ namespace eval WidgetMapper {
     }
 
     proc _debug_put_line {level msg} {
-        set indent [string repeat "  " [expr "$level - 1"]]
-        jdebug::print debug "${indent}$msg"
+        #set indent [string repeat "  " [expr "$level - 1"]]
+        #jdebug::print debug "${indent}$msg"
     }
 
     proc _has_children {w} {
