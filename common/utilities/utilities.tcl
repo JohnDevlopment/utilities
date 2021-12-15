@@ -1,5 +1,13 @@
 package provide utilities 1.0
 
+# Define NDEBUG if it doesn't exist
+if {! [info exists NDEBUG]} {set NDEBUG 1}
+
+# If DEBUG is set in the enviroment, NDEBUG is set to 1
+if {[info exists env(DEBUG)] && $env(DEBUG)} {
+    set NDEBUG 0
+}
+
 namespace eval Random {
     namespace export randi
     namespace ensemble create -command ::random -map {int randi string randstr}
@@ -47,18 +55,31 @@ namespace eval ::constants {namespace current}
 
 # Returns an error if EXP evaluates to false.
 # Customize the error message with MSG.
-proc assert {exp {msg ""}} {
-    if {$msg == ""} {
-        set msg "Assertion failed: $exp"
+if {! $NDEBUG} {
+    proc assert {exp {msg ""}} {
+        #set msg ""
+        #set exp ""
+
+        #Options::getoptions fatal opts args
+
+        if {$msg == ""} {
+            set msg "Assertion failed: $exp"
+        }
+
+        set passed [uplevel [list expr $exp]]
+        if {! $passed} {
+            #return -code 1 $msg
+            puts stderr $msg
+            exit 1
+        }
+
+        return
     }
-
-    set passed [uplevel "expr $exp"]
-
-    if {! $passed} {
-        return -code 1 $msg
+} else {
+    proc assert {exp {msg ""}} {
+        # do nothing
+        return
     }
-
-    return
 }
 
 proc bool {value} {
@@ -258,7 +279,9 @@ namespace eval ::Options {
     namespace export getoptions valid
 }
 
-proc ::Options::getoptions {specs optVar argVar} {
+# Mode corresponds to the behavior of traditional C getopt().
+# The default is '+', which causes it to stop processing as soon as the first non-option is found
+proc ::Options::getoptions {specs optVar argVar {mode +}} {
     if {$optVar eq ""} {
         return -code error "Provide a variable name!"
     }
@@ -360,3 +383,5 @@ proc ::Options::valid {name specs} {
 
     return $msg
 }
+
+unset NDEBUG
