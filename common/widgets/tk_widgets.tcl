@@ -156,7 +156,7 @@ proc ::exWidgets::__set_cmd_and_destroy {class pathname cmd} {
         set body {
             switch -exact \$subcmd {
                 state {
-                    tailcall exw state $pathname {*}$args
+                    tailcall exw state $pathname {*}\$args
                 }
                 default {
                     return [exw subcmd $pathname \$subcmd {*}\$args]
