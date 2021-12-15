@@ -8,9 +8,10 @@ The following functions are exported from the package.
 
 [list_begin definitions]
 [call assert [arg expression] [opt [arg message]]]
-This works like the typical assertion you might have seen in other languages.
-If [arg expression] evaluates to false, then an error is emitted.
-You can tell assert to print [arg message] instead of the default "assertion failed" message.
+If [arg expression] evaluates to false the current program exits with a non-zero status,
+indicating an error.
+[arg message] is printed to standard error as this happens; if it is omitted, it defaults to the
+standard "assertion failed" message.
 
 [call bool [arg value]]
 Returns 1 if [arg value] evaluates to true or 0 otherwise.
