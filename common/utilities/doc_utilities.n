@@ -278,6 +278,8 @@ package require \fButilities  ?1\&.0?\fR
 .sp
 assert \fIexpression\fR ?\fImessage\fR?
 .sp
+bitset \fIintVar\fR \fIbit\fR \fIflag\fR
+.sp
 bool \fIvalue\fR
 .sp
 const \fIname\fR \fIvalue\fR
@@ -311,6 +313,9 @@ If \fIexpression\fR evaluates to false the current program exits with a non-zero
 indicating an error\&.
 \fImessage\fR is printed to standard error as this happens; if it is omitted, it defaults to the
 standard "assertion failed" message\&.
+.TP
+bitset \fIintVar\fR \fIbit\fR \fIflag\fR
+Set or clear the given \fIbit\fR in \fIintVar\fR; set if \fIflag\fR is true, clear otherwise\&.
 .TP
 bool \fIvalue\fR
 Returns 1 if \fIvalue\fR evaluates to true or 0 otherwise\&.

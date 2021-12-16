@@ -51,8 +51,6 @@ proc ::tcl::mathfunc::clamp {value min max} {
     return $value
 }
 
-namespace eval ::constants {namespace current}
-
 # Returns an error if EXP evaluates to false.
 # Customize the error message with MSG.
 if {! $NDEBUG} {
@@ -82,6 +80,23 @@ if {! $NDEBUG} {
     }
 }
 
+proc bitset {intVar bit flag} {
+    upvar $intVar Int
+
+    if {[string first 0x $bit] == 0} {
+        set bit [scan $bit "0x%x"]
+    }
+
+    if {$flag} {
+        set Int [expr "$Int | $bit"]
+    } else {
+        set bitmask [expr "$bit ^ -1"]
+        set Int [expr "$Int & $bitmask"]
+    }
+
+    return
+}
+
 proc bool {value} {
     switch -exact [string tolower $value] {
         true {
@@ -101,6 +116,8 @@ proc bool {value} {
 
     return -code error "FATAL: Unreachable code encountered"
 }
+
+namespace eval ::constants {}
 
 # Defines a readonly variable. Any subsequent attempts to
 # modify the variable result in an error.

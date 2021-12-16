@@ -13,6 +13,9 @@ indicating an error.
 [arg message] is printed to standard error as this happens; if it is omitted, it defaults to the
 standard "assertion failed" message.
 
+[call bitset [arg intVar] [arg bit] [arg flag]]
+Set or clear the given [arg bit] in [arg intVar]; set if [arg flag] is true, clear otherwise.
+
 [call bool [arg value]]
 Returns 1 if [arg value] evaluates to true or 0 otherwise.
 Used for converting between boolean values for mainly logging purposes.
