@@ -313,6 +313,9 @@ If \fIexpression\fR evaluates to false the current program exits with a non-zero
 indicating an error\&.
 \fImessage\fR is printed to standard error as this happens; if it is omitted, it defaults to the
 standard "assertion failed" message\&.
+.sp
+To use this function, you need to set  to 0\&.
+This is done automatically if the DEBUG enviroment variable is set to a non-zero value\&.
 .TP
 bitset \fIintVar\fR \fIbit\fR \fIflag\fR
 Set or clear the given \fIbit\fR in \fIintVar\fR; set if \fIflag\fR is true, clear otherwise\&.

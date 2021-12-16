@@ -13,6 +13,10 @@ indicating an error.
 [arg message] is printed to standard error as this happens; if it is omitted, it defaults to the
 standard "assertion failed" message.
 
+[para]
+To use this function, you need to set [variable NDEBUG] to 0.
+This is done automatically if the DEBUG enviroment variable is set to a non-zero value.
+
 [call bitset [arg intVar] [arg bit] [arg flag]]
 Set or clear the given [arg bit] in [arg intVar]; set if [arg flag] is true, clear otherwise.
 
