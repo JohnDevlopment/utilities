@@ -63,9 +63,14 @@ namespace eval WidgetMapper {
         variable level 0
         variable mapping ""
 
+        # process all -map options
         set mapMode 0
         set args [lmap opt $args {
             if {$mapMode} {
+                if {[llength $opt] != 2} {
+                    return -code error -errorcode [list TCL INVALID PARAM -map] \
+                        "invalid mapping '$opt', must be a two-element list"
+                }
                 lassign $opt v k
                 dict set mapping $k $v
                 set mapMode 0
