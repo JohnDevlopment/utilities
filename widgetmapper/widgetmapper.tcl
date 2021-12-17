@@ -21,18 +21,24 @@ namespace eval WidgetMapper {
     namespace import ::Options::getoptions
 
     # find ?-start path? name
-    proc find {args} {
-        getoptions {{start.arg .}} opts args
+    proc find args {
+        getoptions {{start.arg .} {depth.arg 0}} opts args
 
         if {[llength $args] != 1} {
             return -code error -errorcode [list TCL WRONGARGS] \
-                "wrong # args: should be WidgetMapper::find ?options? name"
+                "wrong # args: should be \"WidgetMapper::find ?options? name\""
+        }
+
+        # invalid starting point
+        if {! [winfo exists $opts(start)]} {
+            return -code error -errorcode [list TCL INVALID PARAM $opts(start)] \
+                "invalid parameter '$opts(start)', widget does not exist"
         }
 
         # last argument is name to search for
         set name [lindex $args 0]
         if {[string first . $name] >= 0} {
-            return -code error -errorcode [list TCL INVALID PARAM] \
+            return -code error -errorcode [list TCL INVALID PARAM $name] \
                 "invalid parameter '$name', cannot contain dots"
         }
 
@@ -46,7 +52,7 @@ namespace eval WidgetMapper {
 
         set start $opts(start)
         _debug_put_line 0 "Starting point: $start, looking for $name"
-        _find $start $start $name
+        _find $start $start $name $opts(depth)
 
         return $widgetreturn
     }
@@ -115,6 +121,8 @@ namespace eval WidgetMapper {
         _debug_put_line $level "Exit recursion level $level"
 
         incr level -1
+
+        return
     }
 
     proc _debug_put_line {level msg} {
@@ -127,14 +135,14 @@ namespace eval WidgetMapper {
         return [expr "[llength $children] > 0"]
     }
 
-    proc _find {root widget name} {
+    proc _find {root widget name depth} {
         variable level
         variable widgets
         variable widgetreturn
 
-        if {$level >= $::WidgetMapperRecursionLimit} {
-            return -code error "Recursion limit of $::WidgetMapperRecursionLimit exceeded"
-        }
+        assert {$level < $::WidgetMapperRecursionLimit} "Recursion limit of $::WidgetMapperRecursionLimit exceeded"
+
+        if {$depth > 0 && $level >= $depth} return
 
         incr level 1
         set widgets($level) [winfo children $widget]
@@ -156,7 +164,7 @@ namespace eval WidgetMapper {
             # Recurse
             foreach child $children {
                 if {[_has_children $child]} {
-                    _find $root $child $name
+                    _find $root $child $name $depth
                 } else {
                     _debug_put_line [expr $level + 1] "$child has no children"
                 }
