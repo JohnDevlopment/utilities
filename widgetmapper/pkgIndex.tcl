@@ -8,4 +8,4 @@
 # script is sourced, the variable $dir must contain the
 # full path name of this file's directory.
 
-package ifneeded widgetmapper 1.0a0 [list source [file join $dir widgetmapper.tcl]]
+package ifneeded widgetmapper 1.0 [list source [file join $dir widgetmapper.tcl]]

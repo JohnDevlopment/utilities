@@ -1,5 +1,5 @@
-[vset version 1.0-alpha]
-[vset vtag 1.0a0]
+[vset version 1.0]
+[vset vtag 1.0]
 [manpage_begin WidgetMapper n [vset version]]
 [require widgetmapper [opt [vset vtag]]]
 [copyright "John Russell 2021"]

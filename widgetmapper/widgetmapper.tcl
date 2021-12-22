@@ -3,7 +3,7 @@
 # Version 0.1-alpha
 # Created by John Russell
 ##################################################
-package provide widgetmapper 1.0a0
+package provide widgetmapper 1.0
 
 package require utilities
 package require jdebug
@@ -19,6 +19,8 @@ namespace eval WidgetMapper {
     variable data
 
     namespace import ::Options::getoptions
+    namespace export find map_widgets
+    namespace ensemble create -command ::mapper -map {find find map map_widgets}
 
     # find ?-start path? name
     proc find args {

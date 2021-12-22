@@ -2,7 +2,7 @@
 '\" Generated from file '' by tcllib/doctools with format 'nroff'
 '\" Copyright (c) John Russell 2021
 '\"
-.TH "WidgetMapper" n 1\&.0-alpha  "Tk Widget Mapper"
+.TH "WidgetMapper" n 1\&.0  "Tk Widget Mapper"
 .\" The -*- nroff -*- definitions below are for supplemental macros used
 .\" in Tcl/Tk manual entries.
 .\"
@@ -274,7 +274,7 @@ Database Class:	\\fB\\$3\\fR
 .SH NAME
 WidgetMapper \- Tk Widget Mapper
 .SH SYNOPSIS
-package require \fBwidgetmapper  ?1\&.0a0?\fR
+package require \fBwidgetmapper  ?1\&.0?\fR
 .sp
 ::WidgetMapper::find ?options? \fIname\fR
 .sp
@@ -337,7 +337,7 @@ Examples for using \fBWidgetMapper::find\fR:
 .CS
 
 
-package require widgetmapper 1\&.0a0
+package require widgetmapper 1\&.0
 
 # Default behavior
 button \&.frame1\&.button -text "Click Me" -command {puts "Hello world!"}
@@ -356,7 +356,7 @@ Examples for using \fBWidgetMapper::map_widgets\fR:
 .CS
 
 
-package require widgetmapper 1\&.0a0
+package require widgetmapper 1\&.0
 
 ttk::frame \&.frame1
 ttk::label \&.frame1\&.lbName -text Name
