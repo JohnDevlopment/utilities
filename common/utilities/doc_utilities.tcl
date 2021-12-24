@@ -1,6 +1,10 @@
-[manpage_begin utilities n "1.0"]
+[vset version "1.0.1"]
+[vset pkgVer "1.0.1"]
+[manpage_begin utilities n [vset version]]
+[require utilities [opt [vset pkgVer]]]
+[copyright "John Russell 2021"]
+[moddesc "Tcl Utility Functions"]
 [titledesc "Tcl Utility Functions"]
-[include ../../inc/utilities-meta.tcl]
 [description]
 This package contains a series of handy utility functions that may aid in the development of
 Tcl-based applications.
