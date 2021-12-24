@@ -97,26 +97,6 @@ proc bitset {intVar bit flag} {
     return
 }
 
-proc bool {value} {
-    switch -exact [string tolower $value] {
-        true {
-            return 1
-        }
-        false {
-            return 0
-        }
-        1 {
-            return 1
-        }
-        default {
-            #return -code error "Invalid string \"$value\", must be either true (1) or false (0), or its integer equivelent"
-            return 0
-        }
-    }
-
-    return -code error "FATAL: Unreachable code encountered"
-}
-
 namespace eval ::constants {}
 
 # Defines a readonly variable. Any subsequent attempts to
