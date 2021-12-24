@@ -1,5 +1,5 @@
-[vset version "1.0.1"]
-[vset pkgVer "1.0.1"]
+[vset version "1.1"]
+[vset pkgVer "1.1`"]
 [manpage_begin utilities n [vset version]]
 [require utilities [opt [vset pkgVer]]]
 [copyright "John Russell 2021"]

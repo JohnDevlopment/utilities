@@ -1,4 +1,4 @@
-package provide utilities 1.0.1
+package provide utilities 1.1
 
 # Define NDEBUG if it doesn't exist
 if {! [info exists NDEBUG]} {set NDEBUG 1}
