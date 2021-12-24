@@ -4,7 +4,8 @@
 [description]
 This package contains a series of handy utility functions that may aid in the development of
 Tcl-based applications.
-The following functions are exported from the package.
+
+[section "Public API"]
 
 [list_begin definitions]
 [call assert [arg expression] [opt [arg message]]]
@@ -19,10 +20,6 @@ This is done automatically if the DEBUG enviroment variable is set to a non-zero
 
 [call bitset [arg intVar] [arg bit] [arg flag]]
 Set or clear the given [arg bit] in [arg intVar]; set if [arg flag] is true, clear otherwise.
-
-[call bool [arg value]]
-Returns 1 if [arg value] evaluates to true or 0 otherwise.
-Used for converting between boolean values for mainly logging purposes.
 
 [call const [arg name] [arg value]]
 Creates a new variable by the name [arg name] and sets its value to [arg value].
@@ -59,13 +56,9 @@ If [arg i] is not provided, then 1 is used as the default.
 [para]
 The return value is the value of [arg var] prior to the increment.
 
-[call random integer [opt [arg min]] [arg max]]
-Returns a random integer between [arg min] and [arg max].
-If [arg min] is omitted, it defaults to zero.
-
-[call random string [arg length]]
-Returns a randomly generated string of [arg length] characters.
-The string will contain characters between a-z (upper and lowercase) and an underscore.
+[call popFront [arg listVar]]
+Removes the first element of the list contained in [arg listVar] and returns it.
+If the list is empty, so is the return value.
 
 [call settemp [arg var] [opt [arg value]]]
 Creates a temporary value that deletes itself at idle time.
@@ -73,7 +66,19 @@ Internally, [arg var] gets added to a queue that is processed at the start of th
 using [cmd {after idle}].
 [list_end]
 
-[para]
+[subsection "Randon Number Generation"]
+
+[list_begin definitions]
+[call random integer [opt [arg min]] [arg max]]
+Returns a random integer between [arg min] and [arg max].
+If [arg min] is omitted, it defaults to zero.
+
+[call random string [arg length]]
+Returns a randomly generated string of [arg length] characters.
+The string will contain characters between a-z (upper and lowercase) and an underscore.
+[list_end]
+
+[subsection "Option Processing"]
 These functions belong to the [namespace ::Options] namespace.
 
 [list_begin definitions]
@@ -92,5 +97,4 @@ The options in [arg argvVar] are put into the array variable [arg optVar], where
 an option and its value is the corresponding argument.
 
 [list_end]
-
 [manpage_end]

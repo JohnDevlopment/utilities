@@ -280,8 +280,6 @@ assert \fIexpression\fR ?\fImessage\fR?
 .sp
 bitset \fIintVar\fR \fIbit\fR \fIflag\fR
 .sp
-bool \fIvalue\fR
-.sp
 const \fIname\fR \fIvalue\fR
 .sp
 deref \fIvar\fR
@@ -294,11 +292,13 @@ lremove \fIlistVar\fR \fIbegin\fR ?\fIend\fR?
 .sp
 pincr \fIvar\fR ?\fIi\fR?
 .sp
+popFront \fIlistVar\fR
+.sp
+settemp \fIvar\fR ?\fIvalue\fR?
+.sp
 random integer ?\fImin\fR? \fImax\fR
 .sp
 random string \fIlength\fR
-.sp
-settemp \fIvar\fR ?\fIvalue\fR?
 .sp
 getOptions \fIspecs\fR \fIoptVar\fR \fIargvVar\fR
 .sp
@@ -306,7 +306,7 @@ getOptions \fIspecs\fR \fIoptVar\fR \fIargvVar\fR
 .SH DESCRIPTION
 This package contains a series of handy utility functions that may aid in the development of
 Tcl-based applications\&.
-The following functions are exported from the package\&.
+.SH "PUBLIC API"
 .TP
 assert \fIexpression\fR ?\fImessage\fR?
 If \fIexpression\fR evaluates to false the current program exits with a non-zero status,
@@ -319,10 +319,6 @@ This is done automatically if the DEBUG enviroment variable is set to a non-zero
 .TP
 bitset \fIintVar\fR \fIbit\fR \fIflag\fR
 Set or clear the given \fIbit\fR in \fIintVar\fR; set if \fIflag\fR is true, clear otherwise\&.
-.TP
-bool \fIvalue\fR
-Returns 1 if \fIvalue\fR evaluates to true or 0 otherwise\&.
-Used for converting between boolean values for mainly logging purposes\&.
 .TP
 const \fIname\fR \fIvalue\fR
 Creates a new variable by the name \fIname\fR and sets its value to \fIvalue\fR\&.
@@ -356,6 +352,17 @@ If \fIi\fR is not provided, then 1 is used as the default\&.
 .sp
 The return value is the value of \fIvar\fR prior to the increment\&.
 .TP
+popFront \fIlistVar\fR
+Removes the first element of the list contained in \fIlistVar\fR and returns it\&.
+If the list is empty, so is the return value\&.
+.TP
+settemp \fIvar\fR ?\fIvalue\fR?
+Creates a temporary value that deletes itself at idle time\&.
+Internally, \fIvar\fR gets added to a queue that is processed at the start of the next event loop,
+using \fBafter idle\fR\&.
+.PP
+.SS "RANDON NUMBER GENERATION"
+.TP
 random integer ?\fImin\fR? \fImax\fR
 Returns a random integer between \fImin\fR and \fImax\fR\&.
 If \fImin\fR is omitted, it defaults to zero\&.
@@ -363,13 +370,8 @@ If \fImin\fR is omitted, it defaults to zero\&.
 random string \fIlength\fR
 Returns a randomly generated string of \fIlength\fR characters\&.
 The string will contain characters between a-z (upper and lowercase) and an underscore\&.
-.TP
-settemp \fIvar\fR ?\fIvalue\fR?
-Creates a temporary value that deletes itself at idle time\&.
-Internally, \fIvar\fR gets added to a queue that is processed at the start of the next event loop,
-using \fBafter idle\fR\&.
 .PP
-.PP
+.SS "OPTION PROCESSING"
 These functions belong to the \fB::Options\fR namespace\&.
 .TP
 getOptions \fIspecs\fR \fIoptVar\fR \fIargvVar\fR
