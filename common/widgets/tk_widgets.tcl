@@ -127,7 +127,7 @@ proc ::exWidgets::parseOptions {dataVar specs argVar} {
             } else {
                 # Unknown option, error
                 #set args [list $opt {*}$args]
-                return -code error -errorcode [list TK INVALID PARAM $opt] \
+                return -code error -errorcode [list TCL INVALID PARAM $opt] \
                     "unknown option \"$opt\""
             }
         } else {

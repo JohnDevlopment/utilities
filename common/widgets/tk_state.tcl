@@ -2,7 +2,7 @@ proc ::exWidgets::tk_state {pathname {statespec ""}} {
     namespace upvar [namespace current] packinfo($pathname) PackInfo
 
     if {[catch {dict size $PackInfo} err]} {
-        return -code error -errorcode [list TK INVALID_PARAM $pathname] \
+        return -code error -errorcode [list TCL INVALID PARAM $pathname] \
             "$pathname is not a path that was created by any of our functions"
     }
 
@@ -29,7 +29,7 @@ proc ::exWidgets::__state_text {pathname {statespec ""}} {
     } \
     elseif {$statespec ni {normal disabled}} {
         # Invalid state, is not normal or disabled
-        return -code error -errorcode [list TK INVALID_PARAM $statespec] \
+        return -code error -errorcode [list TCL INVALID PARAM $statespec] \
             "invalid state \"$statespec\", must be normal or disabled"
     }
 

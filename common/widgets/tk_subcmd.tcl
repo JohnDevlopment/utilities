@@ -3,7 +3,7 @@ proc ::exWidgets::tk_subcmd {pathname cmd args} {
 
     # Error if the widget $pathname was not created by our functions
     if {[catch {dict size $PackInfo} err]} {
-        return -code error -errorcode [list TK INVALID_PARAM $pathname] \
+        return -code error -errorcode [list TCL INVALID PARAM $pathname] \
             "$pathname is not a path that was created by any of our functions"
     }
 
@@ -47,7 +47,7 @@ proc ::exWidgets::__subcmd_clear_text {pathname} {
 proc ::exWidgets::__subcmd_instate_text {pathname statespec {script ""}} {
     # Invalid state, is not normal or disabled
     if {$statespec ni {normal disabled}} {
-        return -code error -errorcode [list TK INVALID_PARAM $statespec] \
+        return -code error -errorcode [list TCL INVALID PARAM $statespec] \
             "invalid state \"$statespec\", must be normal or disabled"
     }
 

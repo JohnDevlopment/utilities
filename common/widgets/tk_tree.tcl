@@ -18,10 +18,10 @@ proc ::exWidgets::tk_tree args {
         set frame [info frame -1]
         set cmd [lindex $frame 1]
         return -code error -errorcode [list TCL WRONGARGS] \
-            "wrong # args: should be \"$cmd\""
-    } elseif {[regexp {\.[a-z]*} $id]} {
+            "wrong # args: should be \"$cmd\" ?options? pathname ?identifier? ?options?"
+    } elseif {[string first . $id] >= 0} {
         set pathname $id
-        return -code error -errorcode [list TK INVALID PARAM $pathname] \
+        return -code error -errorcode [list TCL INVALID PARAM $pathname] \
             "invalid path \"$pathname\""
     }
 
@@ -46,13 +46,13 @@ proc ::exWidgets::tk_tree args {
     # Invalid path name?
     if {[catch {ttk::frame $pathname} err]} {
         unset identifiers($pathname)
-        return -code error -errorcode [list TK INVALID PARAM $pathname] $err
+        return -code error -errorcode [list TCL INVALID PARAM $pathname] $err
     }
 
     # Identifier already exists as a command
     if {$cmd ne ""} {
         if {[info commands $cmd] ne ""} {
-            return -code error -errorcode [list TK INVALID_PARAM $cmd] \
+            return -code error -errorcode [list TCL INVALID PARAM $cmd] \
                 "invalid identifier \"$cmd\": a command by that name already exists"
         }
     }

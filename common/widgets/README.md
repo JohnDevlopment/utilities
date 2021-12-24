@@ -59,9 +59,9 @@ if {$pathname eq ""} {
     set cmd [lindex $frame 1]
     return -code error -errorcode [list TCL WRONGARGS] \
         "wrong # args: should be \"$cmd\" pathname ?identifier? ?options?"
-} elseif {[regexp {\.[a-z]*} $id]} {
+} elseif {[string first . $id] >= 0} {
     set pathname $id
-    return -code error -errorcode [list TK INVALID PARAM $pathname] \
+    return -code error -errorcode [list TCL INVALID PARAM $pathname] \
         "invalid path \"$pathname\""
 }
 ```
@@ -89,9 +89,9 @@ If the first argument is empty, then we return a standard "wrong # args" error. 
 
 ```tcl
 # TODO: subject to change
-elseif {[regexp {\.[a-z]*} $id]} {
+elseif {[string first . $id] >= 0} {
     set pathname $id
-    return -code error -errorcode [list TK INVALID PARAM $pathname] \
+    return -code error -errorcode [list TCL INVALID PARAM $pathname] \
         "invalid path \"$pathname\""
 }
 ```
@@ -127,7 +127,7 @@ If both tests succeed, then it is registered as an identifier. `$cmd` will be us
 # Invalid path name?
 if {[catch {ttk::frame $pathname} err]} {
     unset identifiers($pathname)
-    return -code error -errorcode [list TK INVALID PARAM $pathname] $err
+    return -code error -errorcode [list TCL INVALID PARAM $pathname] $err
 }
 ```
 
