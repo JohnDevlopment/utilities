@@ -4,7 +4,7 @@ Useful Tcl packages and scripts.
 
 ## Tcl Packages
 
-* [utilities](common/utilities/doc_utilities.html)
+* [utilities](common/utilities/doc_utilities.md)
 * widgetmapper
 * jdebug
 * widgets
