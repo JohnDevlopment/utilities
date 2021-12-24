@@ -8,4 +8,4 @@
 # script is sourced, the variable $dir must contain the
 # full path name of this file's directory.
 
-package ifneeded tk_widgets 0.5 [list source [file join $dir tk_widgets.tcl]]
+package ifneeded tk_widgets 0.6 [list source [file join $dir tk_widgets.tcl]]

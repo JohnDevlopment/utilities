@@ -1,4 +1,4 @@
-package provide tk_widgets 0.5
+package provide tk_widgets 0.6
 
 set srcfile [lindex [dict get [info frame -1] cmd] 1]
 set dir [file dirname $srcfile]
