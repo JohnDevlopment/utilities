@@ -1,0 +1,116 @@
+#!/usr/bin/env tclsh
+package require doctools
+package require jdebug
+package require utilities
+
+proc usage {} {
+    global argv0
+    set base [file tail $argv0]
+    set indent "       "
+
+    proc nextLine {line indent} {
+        upvar msg Msg
+        append Msg "\n${indent}$line"
+        return
+    }
+
+    set msg "usage: $base \[-h|--help]"
+    nextLine "$base \[--debug <level>] input \[output]" $indent
+
+    rename nextLine {}
+
+    return $msg
+}
+
+proc doOrFail {prefix args} {
+    set code [catch $args err]
+    if {$code} {
+        puts stderr "$prefix$err"
+        exit 1
+    }
+}
+
+# Parse commandline options
+set specs {
+    h -help
+    -debug.arg ""
+}
+Options::getoptions $specs opts argv
+unset specs
+
+# Print help message
+if {$opts(h) || $opts(-help)} {
+    puts stderr "[usage]\n[doctools::help]"
+    exit
+}
+
+# debugging enabled
+if {$opts(-debug) ne ""} {
+    jdebug::on
+    doOrFail "Error: " jdebug::level $opts(-debug)
+}
+
+# input file
+set input [lindex $argv 0]
+if {! [file exists $input]} {
+    puts stderr "invalid file name '$input'"
+    exit 1
+}
+jdebug::print info "input file: $input"
+
+# output file
+set output [lindex $argv 1]
+if {$output eq ""} {
+    set output -
+    jdebug::print info "Printing to standard output"
+} else {
+    jdebug::print info "Output file is '$output'"
+}
+
+unset opts
+
+doctools::new mddoc -format markdown
+
+# Check if the output file exists
+if {[file exists $output]} {
+    jdebug::print debug "$output already exists"
+    jdebug::print debug "$input modified: [file mtime $input]"
+    jdebug::print debug "$output modified: [file mtime $output]"
+
+    # If it exists, check if the source file is older than the output file
+    # If so, then don't do anything
+    if {[file mtime $input] <= [file mtime $output]} {
+        jdebug::print info "input file is older than the output file, so the output file is up to date"
+        puts "output file '$output' is up to date...nothing to do"
+        exit
+    }
+}
+
+# Input file
+jdebug::print debug "opening $input for reading"
+set id [open $input r]
+try {
+    set data [read $id]
+} finally {
+    close $id
+}
+
+# Output file
+jdebug::print debug "opening $output for writing"
+set mandata [mddoc format $data]
+
+# print to standard output
+if {$output eq "-"} {
+    puts $mandata
+    exit
+}
+
+# print to file
+set id [open $output w]
+try {
+    puts $id $mandata
+} finally {
+    close $id
+}
+
+puts "converted '$input' to markdown: output saved to '$output'"
