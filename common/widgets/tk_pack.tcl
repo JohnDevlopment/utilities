@@ -11,6 +11,17 @@ proc ::exWidgets::tk_pack {pathname args} {
     tailcall "__pack_$class" $pathname {*}$args
 }
 
+proc ::exWidgets::__pack_tree {pathname args} {
+    namespace upvar [namespace current] packinfo($pathname) PackInfo
+
+    ::pack $pathname {*}$args
+    ::pack $pathname.tree -fill both -expand 1 -side left -anchor n -padx {0 30}
+
+    if {[dict get $PackInfo yscrollbar]} {
+        ::place $pathname.yscroll -in $pathname.tree -bordermode outside -relx 1 -y 0 -relheight 1
+    }
+}
+
 proc ::exWidgets::__pack_entry {pathname args} {
     namespace upvar [namespace current] packinfo($pathname) PackInfo
 

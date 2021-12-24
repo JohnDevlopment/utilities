@@ -15,16 +15,19 @@ proc ::exWidgets::tk_subcmd {pathname cmd args} {
     }
 
     switch -exact $class {
-    text {
-        return [$pathname.text $cmd {*}$args]
-    }
-    entry {
-        return [$pathname.entry $cmd {*}$args]
-    }
-    default {
-        return -code error -errorcode [list TK LOOKUP $class] \
-            "unknown class \"$class\""
-    }
+        text {
+            return [$pathname.text $cmd {*}$args]
+        }
+        entry {
+            return [$pathname.entry $cmd {*}$args]
+        }
+        tree {
+            return [$pathname.tree $cmd {*}$args]
+        }
+        default {
+            return -code error -errorcode [list TK LOOKUP $class] \
+                "unknown class \"$class\""
+        }
     }
 }
 

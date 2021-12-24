@@ -8,8 +8,9 @@ after idle {unset -nocomplain srcfile dir}
 namespace eval ::exWidgets {}
 
 source [file join $dir tk_entry.tcl]
-source [file join $dir tk_pack.tcl]
+source [file join $dir tk_tree.tcl]
 source [file join $dir tk_text.tcl]
+source [file join $dir tk_pack.tcl]
 source [file join $dir tk_state.tcl]
 source [file join $dir tk_subcmd.tcl]
 
@@ -19,9 +20,9 @@ namespace eval exWidgets {
     variable commands {tk_entry tk_pack tk_text tk_state tk_subcmd}
     variable identifiers
 
-    namespace export -clear tk_entry tk_pack
+    namespace export -clear tk_*
     namespace ensemble create -command ::exw \
-        -map {entry tk_entry pack tk_pack text tk_text state tk_state subcmd tk_subcmd}
+        -map {entry tk_entry pack tk_pack text tk_text state tk_state subcmd tk_subcmd tree tk_tree}
 }
 
 proc ::exWidgets::validCommands {} {
@@ -145,38 +146,49 @@ proc ::exWidgets::__set_cmd_and_destroy {class pathname cmd} {
     # Script that executes when the widget is destroyed
     set scriptWhenDestroyed [list]
 
-    set temp [namespace code {unset identifiers($pathname); unset packinfo($pathname)}]
+    set temp [namespace code [list unset -nocomplain identifiers($pathname) packinfo($pathname)]]
     lappend scriptWhenDestroyed [subst $temp]
 
     switch -exact $class {
-    text {
-        # Text widget command
-        set cmdname "::$cmd"
-        set args {subcmd args}
-        set body {
-            switch -exact \$subcmd {
-                state {
-                    tailcall exw state $pathname {*}\$args
-                }
-                default {
-                    return [exw subcmd $pathname \$subcmd {*}\$args]
+        text {
+            # Text widget command
+            set cmdname "::$cmd"
+            set args {subcmd args}
+            set body {
+                switch -exact \$subcmd {
+                    state {
+                        tailcall exw state $pathname {*}\$args
+                    }
+                    default {
+                        return [exw subcmd $pathname \$subcmd {*}\$args]
+                    }
                 }
             }
+            proc $cmdname $args [subst -nocommand $body]
+            lappend scriptWhenDestroyed [list rename $cmdname ""]
         }
-        proc $cmdname $args [subst -nocommand $body]
-        lappend scriptWhenDestroyed [list rename $cmdname ""]
-    }
 
-    entry {
-        # Entry widget command
-        set cmdname "::$cmd"
-        set args {subcmd args}
-        set body {
-            return [exw subcmd $pathname \$subcmd {*}\$args]
+        entry {
+            # Entry widget command
+            set cmdname "::$cmd"
+            set args {subcmd args}
+            set body {
+                return [exw subcmd $pathname \$subcmd {*}\$args]
+            }
+            proc $cmdname $args [subst -nocommand $body]
+            lappend scriptWhenDestroyed [list rename $cmdname ""]
         }
-        proc $cmdname $args [subst -nocommand $body]
-        lappend scriptWhenDestroyed [list rename $cmdname ""]
-    }
+
+        tree {
+            # Tree widget command
+            set cmdname "::$cmd"
+            set args {subcmd args}
+            set body {
+                return [exw subcmd $pathname \$subcmd {*}\$args]
+            }
+            proc $cmdname $args [subst -nocommand $body]
+            lappend scriptWhenDestroyed [list rename $cmdname ""]
+        }
     }
 
     bind $pathname <Destroy> [join $scriptWhenDestroyed "\n"]
