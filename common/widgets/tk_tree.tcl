@@ -77,8 +77,8 @@ proc ::exWidgets::tk_tree args {
 
     # Subwidgets
     ttk::treeview $pathname.tree {*}$args
-    ttk::scrollbar $pathname.xscroll -orient horizontal -command "$pathname.text xview"
-    ttk::scrollbar $pathname.yscroll -orient vertical -command "$pathname.text yview"
+    ttk::scrollbar $pathname.xscroll -orient horizontal -command "$pathname.tree xview"
+    ttk::scrollbar $pathname.yscroll -orient vertical -command "$pathname.tree yview"
 
     if {[llength $data(headings)] > 0} {
         dict size $data(headings)
