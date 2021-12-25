@@ -51,6 +51,13 @@ proc ::tcl::mathfunc::clamp {value min max} {
     return $value
 }
 
+proc ::tcl::mathfunc::snapped {value {step 1.0}} {
+    if {$step != 0.0} {
+        set value [expr "floor($value / $step + 0.5) * $step"]
+    }
+    return $value
+}
+
 # Returns an error if EXP evaluates to false.
 # Customize the error message with MSG.
 if {! $NDEBUG} {

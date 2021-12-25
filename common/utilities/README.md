@@ -22,6 +22,8 @@ utilities \- Tcl Utility Functions
 
       - [Option Processing](#subsection2)
 
+      - [Expanded Math Functions](#subsection3)
+
   - [Copyright](#copyright)
 
 # <a name='synopsis'></a>SYNOPSIS
@@ -41,6 +43,8 @@ package require utilities ?1\.1\`?
 [random integer ?*min*? *max*](#11)  
 [random string *length*](#12)  
 [getOptions *specs* *optVar* *argvVar*](#13)  
+[clamp *value* *min* *max*](#14)  
+[snapped *number* ?*step*?](#15)  
 
 # <a name='description'></a>DESCRIPTION
 
@@ -145,6 +149,21 @@ These functions belong to the __::Options__ namespace\.
 
     The options in *argvVar* are put into the array variable *optVar*, where
     each index is an option and its value is the corresponding argument\.
+
+## <a name='subsection3'></a>Expanded Math Functions
+
+These functions are defined in the __::tcl::mathfunc__ namespace, so they
+can be used inside of __expr__\.
+
+  - <a name='14'></a>clamp *value* *min* *max*
+
+    Returns *value* clamped between the *min* and *max* values\.
+
+  - <a name='15'></a>snapped *number* ?*step*?
+
+    Snaps *number* to the given *step* \(default is 1\)\.
+
+        expr {snapped(3.0461, 0.01)} {# result is 3.0500000000000003}
 
 # <a name='copyright'></a>COPYRIGHT
 

@@ -99,6 +99,18 @@ If [emph option] ends in ".arg", the option expects an argument.
 [para]
 The options in [arg argvVar] are put into the array variable [arg optVar], where each index is
 an option and its value is the corresponding argument.
+[list_end]
 
+[subsection "Expanded Math Functions"]
+These functions are defined in the [namespace ::tcl::mathfunc] namespace, so they can be used inside of [cmd expr].
+
+[list_begin definitions]
+[call clamp [arg value] [arg min] [arg max]]
+Returns [arg value] clamped between the [arg min] and [arg max] values.
+
+[call snapped [arg number] [opt [arg step]]]
+Snaps [arg number] to the given [arg step] (default is 1).
+
+[example [list expr {snapped(3.0461, 0.01)} "# result is 3.0500000000000003"]]
 [list_end]
 [manpage_end]
