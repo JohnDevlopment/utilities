@@ -86,7 +86,7 @@ The string will contain characters between a-z (upper and lowercase) and an unde
 These functions belong to the [namespace ::Options] namespace.
 
 [list_begin definitions]
-[call getOptions [arg specs] [arg optVar] [arg argvVar]]
+[call getoptions [arg specs] [arg optVar] [arg argvVar]]
 Processes commandline options according to the rules defined in [arg specs].
 
 [para]
