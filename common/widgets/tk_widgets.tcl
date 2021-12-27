@@ -7,6 +7,7 @@ after idle {unset -nocomplain srcfile dir}
 
 namespace eval ::exWidgets {}
 
+source [file join $dir tk_bind.tcl]
 source [file join $dir tk_entry.tcl]
 source [file join $dir tk_tree.tcl]
 source [file join $dir tk_text.tcl]
@@ -25,7 +26,15 @@ namespace eval exWidgets {
 
     namespace export -clear tk_*
     namespace ensemble create -command ::exw \
-        -map {entry tk_entry pack tk_pack text tk_text state tk_state subcmd tk_subcmd tree tk_tree}
+        -map {
+            bind    tk_bind
+            entry   tk_entry
+            pack    tk_pack
+            state   tk_state
+            subcmd  tk_subcmd
+            text    tk_text
+            tree    tk_tree
+        }
 }
 
 proc ::exWidgets::validCommands {} {
