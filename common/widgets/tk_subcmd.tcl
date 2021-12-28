@@ -34,6 +34,17 @@ proc ::exWidgets::tk_subcmd {pathname cmd args} {
 # Specialized command functions, in the format: __subcmd_<cmd>_<class>
 # Example: __subcmd_configure_text
 
+proc ::exWidgets::__subcmd_clear_tree {pathname} {
+    #set oldstate [$pathname.tree state]
+    $pathname.tree instate {!disabled !readonly} {
+        set list [$pathname.tree children {}]
+        if {[llength $list]} {
+            $pathname.tree delete $list
+        }
+    }
+    #$pathname.tree state $oldstate
+}
+
 # usage: exw subcmd PATHNAME clear
 proc ::exWidgets::__subcmd_clear_text {pathname} {
     set textState [$pathname.text cget -state]
