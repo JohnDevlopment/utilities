@@ -1,4 +1,5 @@
 # tk_tree pathname ?options?
+#   -headings {column text ...}
 proc ::exWidgets::tk_tree args {
     variable identifiers
 
