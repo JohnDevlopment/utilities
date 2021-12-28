@@ -196,7 +196,14 @@ proc ::exWidgets::__set_cmd_and_destroy {class pathname cmd} {
             set cmdname "::$cmd"
             set args {subcmd args}
             set body {
-                return [exw subcmd $pathname \$subcmd {*}\$args]
+                switch -exact \$subcmd {
+                    state {
+                        tailcall exw state $pathname {*}$args
+                    }
+                    default {
+                        return [exw subcmd $pathname \$subcmd {*}\$args]
+                    }
+                }
             }
             proc $cmdname $args [subst -nocommand $body]
             lappend scriptWhenDestroyed [list rename $cmdname ""]
