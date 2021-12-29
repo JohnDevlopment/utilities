@@ -1,20 +1,16 @@
 [manpage_begin exw_text n ""]
 [titledesc "Create and manipulate expanded multi-line 'text' widgets"]
-[include ../../inc/widgets-meta.tcl]
+[include widgets-meta.tcl]
+[vset class text]
+[vset widget text]
 [description]
-The [cmd "exw text"] command creates a window (provided by the [arg pathName] argument) and makes
-it into an extended [widget text] widget.
-At the time this command is invoked, [arg pathName] must not already exist, yet its parent must exist.
-If the optional [arg identifier] argument is specified, a command named after it will be created.
-At the time of this widget's creation, there must not already be a command named [arg identifier].
-In addition, [arg identifier] cannot have any hyphens or periods.
+[include widgets-description-template.tcl]
 
 [para]
 This command creates a megawidget that expands the functionality of the regular [widget text] widget,
 giving it some additional features that weren't present in the original.
-The options listed below talk about these features.
 
-[section "command-specific options"]
+[include widgets-options-header.tcl]
 
 [list_begin opt]
 [opt_def -wrap "( word | char | none )"]
@@ -40,36 +36,18 @@ If this option is omitted or is an empty string, it defaults to the background c
 uses when it is disabled.
 [list_end]
 
-[section "widget command"]
-When an extended text widget is created, a number of commands are made available.
-If a command other than any listed below is used, it is interpreted as a [widget text] widget
-command (see related documentation).
+[include widgets-commands-header.tcl]
+
+[include widgets-commands-std.tcl]
+
+[subsection "Widget-Specific Commands"]
 
 [list_begin definitions]
-[call exw text [opt [arg options]] [arg pathName] [opt [arg identifier]] [opt [arg options]]]
-See [sectref DESCRIPTION].
-
 [call exw subcmd [arg pathName] clear]
 Clears the text widget, provided it is enabled.
-
-[call exw subcmd [arg pathName] instate [arg statespec] [opt [arg script]]]
-This command tests the widget's state.
-If [arg script] is not specified, this command returns 1 if the widget state matches [arg statespec]
-and 0 otherwise.
-If [arg script] is specified, it is evaluated as a Tcl script if the widget state matches [arg statespec].
-
-[call exw state [arg pathName] [arg statespec]]
-Modifies the widget state.
-[arg statespec] can be either normal or disabled.
-Functionally, this is the same as [concat [arg pathName].text configure -state [arg statespec]].
-
-[call [arg identifier] cmd [opt args...]]
-As mentioned above, specifiying [arg identifier] at the creation of the text widget will result
-in the creation of this command.
-It works as a shortcut to the widget commands so the programmer doesn't have to recall the window path all the time.
 [list_end]
 
-[section examples]
+[section Examples]
 
 [para]
 Create a textbox with a vertical scrollbar using the identifier [emph TEXTBOX].
