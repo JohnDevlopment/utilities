@@ -11,7 +11,6 @@ If [arg script] is specified, it is evaluated as a Tcl script if the widget stat
 [call exw state [arg pathName] [arg statespec]]
 Modifies the widget state.
 For the [widget text] widget, [arg statespec] can be either normal or disabled.
-But for the others, [arg statespec] is the same as in [emph ttk::widget(n)].
 Functionally, this is the same as [example "[arg pathName].[vset class] configure -state [arg statespec]"]
 However, for the ttk widgets, [arg statespec] is in the format allowed by [cmd "[arg pathname] state"] in [emph ttk::widget(n)].
 
