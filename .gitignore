@@ -1,4 +1,4 @@
 temp/
-doc_*.n
+*.n
 doc_*.html
 tests/*
