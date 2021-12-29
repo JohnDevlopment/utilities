@@ -51,10 +51,9 @@ set pathname [popFront args]
 set id [lindex $args 0]
 
 if {$pathname eq ""} {
-    set frame [info frame -1]
-    set cmd [lindex $frame 1]
-    return -code error -errorcode [list TCL WRONGARGS] \
-        "wrong # args: should be \"$cmd\" pathname ?identifier? ?options?"
+	set frame [info frame -1]
+	set cmd [getCommandName $frame 1 ?widgetOptions?]
+	wrongArgs $cmd
 } elseif {[string first . $id] >= 0} {
     set pathname $id
     return -code error -errorcode [list TCL INVALID PARAM $pathname] \

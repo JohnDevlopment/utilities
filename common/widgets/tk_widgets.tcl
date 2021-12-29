@@ -37,6 +37,21 @@ namespace eval exWidgets {
         }
 }
 
+proc ::exWidgets::getCommandName {frame {hasOptions 0} {extras ""}} {
+    set cmd [dict get $frame cmd]; puts "\"$cmd\""
+    if {[lindex $cmd 0] eq "exw"} {
+        set cmd [concat [lrange $cmd 0 1] pathname [lindex $cmd 3]]
+        if {$hasOptions} {
+            set cmd [linsert $cmd 2 "?options?"]
+        }
+        if {[string length $extras]} {
+            set cmd [linsert $cmd 3 $extras]
+        }
+        return [join $cmd]
+    }
+    return [lindex $cmd 0]
+}
+
 proc ::exWidgets::validCommands {} {
     variable commands
 
@@ -57,6 +72,20 @@ proc ::exWidgets::validCommands {} {
     }
 
     return $msg
+}
+
+proc ::exWidgets::wrongArgs {cmd} {
+    return -code error -errorcode [list TCL WRONGARGS] \
+        "wrong # args: should be \"[join $cmd]\""
+}
+
+proc ::exWidgets::invalidParam {param msg} {
+    return -code error -errorcode [list TCL INVALID PARAM $param] $msg
+}
+
+proc ::exWidgets::emptyParam {param} {
+    return -code error -errorcode [list TCL MISSING PARAM $param] \
+        "missing or empty $param"
 }
 
 proc ::exWidgets::valid {name specs} {
