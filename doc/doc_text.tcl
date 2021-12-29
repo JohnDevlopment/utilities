@@ -22,11 +22,6 @@ In the other modes the text line is split across two or more screen lines.
 In [emph char] mode the line break may occur after any character; in [emph word] the line break
 is made only after a word boundary.
 
-[opt_def -maxlen [arg number]]
-Specifies the maximum number of lines that can be contained in the text box.
-If omitted, this option defaults to 0, which causes the text box to have no such limit.
-This option must be a valid whole integer.
-
 [opt_def -scrolly]
 If this option is present, a vertical scrollbar is displayed on the right side of the text widget.
 

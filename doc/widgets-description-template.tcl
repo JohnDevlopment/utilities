@@ -4,4 +4,4 @@ At the time this command is invoked, [arg pathName] must not already exist, yet 
 If the optional [arg identifier] argument is specified, a command named after it will be created.
 At the time of this widget's creation, there must not already be a command named [arg identifier].
 In addition, [arg identifier] cannot have any hyphens or periods.
-See the section [sectref "WIDGET COMMAND"] for more info about this.
+See the section [sectref "Widget Command"] for more info about this.

@@ -20,8 +20,7 @@ If this option is present, a button is display inside the right edge of the entr
 when pressed, clears all of the text inside the entry.
 
 [opt_def -label [arg text]]
-If this option is provided, it specifies a textual string to display in a label to the left of the
-entry widget.
+If this option is provided, it specifies a textual string to display in a label above the entry widget.
 If the option is left out or is an empty string, no label is displayed.
 
 [opt_def -maxlen]
@@ -39,8 +38,6 @@ The scrollbar is setup to scroll the entry widget when the textual data inside i
 [include widgets-commands-header.tcl]
 
 [include widgets-commands-std.tcl]
-
-[subsection "Widget-Specific Commands"]
 
 [section examples]
 
