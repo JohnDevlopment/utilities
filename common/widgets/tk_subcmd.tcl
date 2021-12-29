@@ -45,6 +45,87 @@ proc ::exWidgets::__subcmd_clear_tree {pathname} {
     #$pathname.tree state $oldstate
 }
 
+# exw subcmd pathname search ?options? index pattern
+proc ::exWidgets::__subcmd_search_tree {pathname args} {
+    # error if incorrect usage
+    set temp [lmap a $args {
+        if {[string first - $a] == 0} continue
+        set a
+    }]
+    if {[llength $temp] != 2} {
+        set frame [info frame -1]
+        set cmd [getCommandName $frame 1 {column pattern}]
+        wrongArgs $cmd
+    }
+    unset -nocomplain temp a
+
+    set specs {
+        glob
+        regex
+        exact
+    }
+    parseOptions data $specs args
+
+    set modes [list]
+    foreach a $specs {
+        if {$data($a)} {
+            lappend modes -$a
+        }
+    }
+
+    # error if more than one of the mode switches are given
+    set len [llength $modes]
+    if {$len == 0} {
+        set data(glob) 1
+    } elseif {$len > 1} {
+        set temp [lrange $modes 1 end]
+        invalidParam $temp "cannot mix options \"[join $temp {, }]\": only one of -glob, -regex, and -exact is allowed"
+    }
+
+    # column index
+    set column [popFront args]
+
+    if {$column eq ""} {emptyParam column}
+
+    $pathname.tree column $column
+
+    #if {[catch "$pathname.tree column $column" err]} {
+    #    invalidParam $column "invalid column \"$column\": $err"
+    #}
+
+    if {! [string is digit $column]} {
+        # convert column name into an index
+        set column [lsearch -exact [$pathname.tree cget -columns] $column]
+    }
+
+    # search term
+    set pattern [popFront args]
+    if {$pattern eq ""} {emptyParam "search pattern"}
+
+    # find the search term
+    foreach item [$pathname.tree children {}] {
+        set values [$pathname.tree item $item -values]
+        set compared [lindex $values $column]
+
+        if {$data(glob)} {
+            if {[string match $pattern $compared]} {
+                return $item
+            }
+        } elseif {$data(regex)} {
+            if {[regexp $pattern $compared]} {
+                return $item
+            }
+        } else {
+            # exact
+            if {$compared eq $pattern} {
+                return $item
+            }
+        }
+    }
+
+    return
+}
+
 # usage: exw subcmd PATHNAME clear
 proc ::exWidgets::__subcmd_clear_text {pathname} {
     set textState [$pathname.text cget -state]
