@@ -4,7 +4,6 @@ proc ::exWidgets::tk_text {args} {
 
     set specs {
         {wrap.arg char}
-        {maxlines.arg 0}
         scrolly
         {disabledbackground.arg ""}
     }
