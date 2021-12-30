@@ -4,6 +4,11 @@ format=${1:?provide a format}
 
 cd $(dirname $(realpath $0)) || exit 1
 
+fileBase() {
+    local value="${1%.tcl}"
+    echo "${value#doc_}"
+}
+
 case $format in
     man)
         ext=n
@@ -20,7 +25,8 @@ case $format in
         ;;
 esac
 
+mkdir -p $format
+
 for file in doc_*.tcl; do
-    file=${file#doc_}
-    tcldoc2$format $file ${file%.tcl}.$ext
+    tcldoc2$format $file $format/$(fileBase $file).$ext
 done
