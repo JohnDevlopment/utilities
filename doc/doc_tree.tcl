@@ -33,11 +33,11 @@ Example: [example "{FirstColumn First SecondColumn Second}"]
 [call exw subcmd [arg pathname] clear]
 Clears the entire tree.
 
-<<<<<<< HEAD
+[call exw subcmd [arg pathname] itemindex [arg index]]
+Finds and returns the item in the tree located at [arg index].
+It is any index understood by [cmd lindex].
+
 [call exw subcmd [arg pathname] search [opt [arg options]] [arg column] [arg pattern]]
-=======
-[call exw subcmd [arg pathname] search [opt options] [arg column] [arg pattern]]
->>>>>>> 4ced7a8... Document the expanded tree widget
 Searches the entire tree for an item whose [arg column] matches [arg pattern].
 If a match is found, the ID of the item which contains the matched value is returned;
 otherwise an empty string is returned.

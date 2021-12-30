@@ -34,6 +34,16 @@ proc ::exWidgets::tk_subcmd {pathname cmd args} {
 # Specialized command functions, in the format: __subcmd_<cmd>_<class>
 # Example: __subcmd_configure_text
 
+proc ::exWidgets::__subcmd_itemindex_tree {pathname index} {
+    set items [$pathname.tree children {}]
+    try {
+        set result [lindex $items $index]
+    } on error err {
+        invalidParam $index "invalid index '$index': $err"
+    }
+    return $result
+}
+
 # exw subcmd pathname clear
 proc ::exWidgets::__subcmd_clear_tree {pathname} {
     #set oldstate [$pathname.tree state]

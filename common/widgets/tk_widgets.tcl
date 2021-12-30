@@ -1,5 +1,7 @@
 package provide tk_widgets 0.6.1
 
+# invalidParam param msg
+
 set srcfile [lindex [dict get [info frame -1] cmd] 1]
 set dir [file dirname $srcfile]
 
@@ -79,6 +81,7 @@ proc ::exWidgets::wrongArgs {cmd} {
         "wrong # args: should be \"[join $cmd]\""
 }
 
+# invalidParam param msg
 proc ::exWidgets::invalidParam {param msg} {
     return -code error -errorcode [list TCL INVALID PARAM $param] $msg
 }
