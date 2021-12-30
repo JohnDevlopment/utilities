@@ -212,17 +212,7 @@ proc ::exWidgets::__set_cmd_and_destroy {class pathname cmd} {
             lappend scriptWhenDestroyed [list rename $cmdname ""]
         }
 
-        entry {
-            # Entry widget command
-            set cmdname "::$cmd"
-            set args {subcmd args}
-            set body {
-                return [exw subcmd $pathname \$subcmd {*}\$args]
-            }
-            proc $cmdname $args [subst -nocommand $body]
-            lappend scriptWhenDestroyed [list rename $cmdname ""]
-        }
-
+        entry -
         tree {
             # Tree widget command
             set cmdname "::$cmd"
