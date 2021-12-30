@@ -1,4 +1,6 @@
 temp/
 *.n
-doc_*.html
 tests/*
+doc/html/
+doc/man/
+doc/md/
