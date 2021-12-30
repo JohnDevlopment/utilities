@@ -60,11 +60,7 @@ proc ::exWidgets::__subcmd_search_tree {pathname args} {
     }
     unset -nocomplain temp a
 
-    set specs {
-        glob
-        regex
-        exact
-    }
+    set specs {glob regex exact all inline}
     parseOptions data $specs args
 
     set modes [list]
@@ -103,6 +99,8 @@ proc ::exWidgets::__subcmd_search_tree {pathname args} {
     set pattern [popFront args]
     if {$pattern eq ""} {emptyParam "search pattern"}
 
+    set result ""
+
     # find the search term
     foreach item [$pathname.tree children {}] {
         set values [$pathname.tree item $item -values]
@@ -110,21 +108,33 @@ proc ::exWidgets::__subcmd_search_tree {pathname args} {
 
         if {$data(glob)} {
             if {[string match $pattern $compared]} {
-                return $item
+                if {$data(all)} {
+                    lappend result $item
+                } else {
+                    set result $item
+                }
             }
         } elseif {$data(regex)} {
             if {[regexp $pattern $compared]} {
-                return $item
+                if {$data(all)} {
+                    lappend result $item
+                } else {
+                    set result $item
+                }
             }
         } else {
             # exact
             if {$compared eq $pattern} {
-                return $item
+                if {$data(all)} {
+                    lappend result $item
+                } else {
+                    set result $item
+                }
             }
         }
     }
 
-    return
+    return $result
 }
 
 # usage: exw subcmd PATHNAME clear
