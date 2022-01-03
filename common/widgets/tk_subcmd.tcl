@@ -56,7 +56,7 @@ proc ::exWidgets::__subcmd_clear_tree {pathname} {
     #$pathname.tree state $oldstate
 }
 
-# exw subcmd pathname search ?options? index pattern
+# exw subcmd pathname search ?options? column pattern
 proc ::exWidgets::__subcmd_search_tree {pathname args} {
     # error if incorrect usage
     set temp [lmap a $args {
@@ -70,7 +70,7 @@ proc ::exWidgets::__subcmd_search_tree {pathname args} {
     }
     unset -nocomplain temp a
 
-    set specs {glob regex exact all inline}
+    set specs {glob regex exact all}
     parseOptions data $specs args
 
     set modes [list]
@@ -122,6 +122,7 @@ proc ::exWidgets::__subcmd_search_tree {pathname args} {
                     lappend result $item
                 } else {
                     set result $item
+                    break
                 }
             }
         } elseif {$data(regex)} {
@@ -130,6 +131,7 @@ proc ::exWidgets::__subcmd_search_tree {pathname args} {
                     lappend result $item
                 } else {
                     set result $item
+                    break
                 }
             }
         } else {
@@ -139,6 +141,7 @@ proc ::exWidgets::__subcmd_search_tree {pathname args} {
                     lappend result $item
                 } else {
                     set result $item
+                    break
                 }
             }
         }
