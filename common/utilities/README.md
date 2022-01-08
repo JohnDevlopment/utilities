@@ -41,10 +41,11 @@ package require utilities ?1\.1\`?
 [popFront *listVar*](#9)  
 [settemp *var* ?*value*?](#10)  
 [random integer ?*min*? *max*](#11)  
-[random string *length*](#12)  
-[getOptions *specs* *optVar* *argvVar*](#13)  
-[clamp *value* *min* *max*](#14)  
-[snapped *number* ?*step*?](#15)  
+[random float ?*min*? *max*](#12)  
+[random string *length*](#13)  
+[getoptions *specs* *optVar* *argvVar*](#14)  
+[clamp *value* *min* *max*](#15)  
+[snapped *number* ?*step*?](#16)  
 
 # <a name='description'></a>DESCRIPTION
 
@@ -127,7 +128,12 @@ development of Tcl\-based applications\.
     Returns a random integer between *min* and *max*\. If *min* is omitted,
     it defaults to zero\.
 
-  - <a name='12'></a>random string *length*
+  - <a name='12'></a>random float ?*min*? *max*
+
+    Returns a random floating point number between *min* and *max*\. If
+    *min* is omitted, it defaults to zero\.
+
+  - <a name='13'></a>random string *length*
 
     Returns a randomly generated string of *length* characters\. The string
     will contain characters between a\-z \(upper and lowercase\) and an underscore\.
@@ -136,7 +142,7 @@ development of Tcl\-based applications\.
 
 These functions belong to the __::Options__ namespace\.
 
-  - <a name='13'></a>getOptions *specs* *optVar* *argvVar*
+  - <a name='14'></a>getoptions *specs* *optVar* *argvVar*
 
     Processes commandline options according to the rules defined in *specs*\.
 
@@ -155,11 +161,11 @@ These functions belong to the __::Options__ namespace\.
 These functions are defined in the __::tcl::mathfunc__ namespace, so they
 can be used inside of __expr__\.
 
-  - <a name='14'></a>clamp *value* *min* *max*
+  - <a name='15'></a>clamp *value* *min* *max*
 
     Returns *value* clamped between the *min* and *max* values\.
 
-  - <a name='15'></a>snapped *number* ?*step*?
+  - <a name='16'></a>snapped *number* ?*step*?
 
     Snaps *number* to the given *step* \(default is 1\)\.
 

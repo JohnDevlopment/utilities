@@ -77,6 +77,10 @@ using [cmd {after idle}].
 Returns a random integer between [arg min] and [arg max].
 If [arg min] is omitted, it defaults to zero.
 
+[call random float [opt [arg min]] [arg max]]
+Returns a random floating point number between [arg min] and [arg max].
+If [arg min] is omitted, it defaults to zero.
+
 [call random string [arg length]]
 Returns a randomly generated string of [arg length] characters.
 The string will contain characters between a-z (upper and lowercase) and an underscore.

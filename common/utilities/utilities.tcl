@@ -10,13 +10,30 @@ if {[info exists env(DEBUG)] && $env(DEBUG)} {
 
 namespace eval Random {
     namespace export randi
-    namespace ensemble create -command ::random -map {int randi string randstr}
+    namespace ensemble create -command ::random -map {float randf int randi string randstr}
+
+    # Produce a random float from a range.
+    proc randf args {
+        set funcname "randf_[llength $args]"
+        if {[info proc $funcname] == ""} {
+            return -code error -errorcode {TCL WRONGARGS} \
+                "wrong # args: should be \"random float ?min? max\""
+        }
+        tailcall $funcname {*}$args
+    }
+
+    proc randf_1 max {tailcall randf_2 0 $max}
+
+    proc randf_2 {min max} {
+        return [expr "rand() * ($max - $min + 1) + $min"]
+    }
 
     # Produce a random integer from a range.
     proc randi args {
         set funcname "randi_[llength $args]"
         if {[info proc $funcname] == ""} {
-            return -code error "wrong # args: should be one of the following: random int ?min? max"
+            return -code error -errorcode {TCL WRONGARGS} \
+                "wrong # args: should be \"random int ?min? max\""
         }
         tailcall $funcname {*}$args
     }
