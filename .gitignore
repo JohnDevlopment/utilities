@@ -1,6 +1,5 @@
 temp/
 *.n
-tests/*
 doc/html/
 doc/man/
 doc/md/

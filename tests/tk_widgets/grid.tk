@@ -1,0 +1,12 @@
+package require tk_widgets
+
+wm geometry . 500x240
+
+pack [ttk::frame .f1] -fill both -expand 1
+
+exw entry -label E1 .f1.e1
+exw entry -label E2 .f1.e2
+ttk::button .f1.bt1 -text B1 -command exit
+
+exw grid .f1.e1 x .f1.bt1
+exw grid x .f1.e2
