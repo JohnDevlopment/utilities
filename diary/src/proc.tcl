@@ -4,12 +4,23 @@ proc displayError {msg args} {
 }
 
 proc fileCommand {op args} {
+    global FileModified CurrentFile EntryModified
+
     set fileTypes {
         {"JSON Files" {.json .JSON}}
     }
 
     switch -exact $op {
     new {
+        # Save modified file if it already has a name
+        if {$FileModified && $CurrentFile ne "untitled"} {
+            set yn [tk_messageBox -parent . -title "Unsaved Changes" -type yesnocancel -icon question \
+                -message "You have unsaved changes to the file. Do you want to save those changes?"]
+            if {$yn eq "yes"} {
+                fileCommand save
+            } elseif {$yn eq "cancel"} return
+        }
+
         # Clear text box
         exw state .nb.frame1.text normal
         exw subcmd .nb.frame1.text clear
@@ -25,12 +36,12 @@ proc fileCommand {op args} {
         uplevel #0 {
             set SELECTED_ENTRY ""
             set CurrentFile "untitled"
+            set EntryModified 0
+            set FileModified 0
         }
     }
 
     close {
-        global FileModified CurrentFile
-
         if {$FileModified} {
             set yn [tk_messageBox -parent . -title "Unsaved Changes" -type yesnocancel -icon question \
                 -message "You have unsaved changes to the file. Do you want to save those changes?"]
@@ -70,15 +81,15 @@ proc fileCommand {op args} {
         focus .
 
         set FileModified 0
+        set EntryModified 0
         printStatusbar 1 "File saved" 1000
     }
 
     save {
-        global FileData CurrentFile FileModified
-
         if {! $FileModified} return
 
         # Input errors
+        global FileData
         if {$CurrentFile eq ""} {
             return [displayError "Cannot save file!" -detail "No file to save!"]
         }
@@ -110,14 +121,13 @@ proc fileCommand {op args} {
     }
 
     saveas {
-        global FileData CurrentFile CurrentDir FileModified
-
         if {! $FileModified} return
 
         if {$CurrentFile eq ""} {
             return [displayError "Cannot save file!" -detail "No file to save!"]
         }
 
+        global FileData
         if {$FileData eq ""} {
             return [displayError "Cannot save file!" -detail "There is no data to save to file."]
         }
@@ -182,7 +192,7 @@ proc fileCommand {op args} {
             printStatusbar 1 "File opened" 1500
         }
     }
-    }
+    } ; # end switch
 }
 
 proc popFront {listVar} {
