@@ -2,7 +2,7 @@
 
 pack [ttk::frame .nb.frame2.subframe1] -fill x
 
-exw entry -label Directory .nb.frame2.subframe1.directory -state readonly
+exw entry -label Directory .nb.frame2.subframe1.directory -state readonly -width 30
 
 ttk::button .nb.frame2.subframe1.browse -text "Browse..." -command {
     settemp t_dir [tk_chooseDirectory -initialdir $CurrentDir -parent . -title "Choose Directory"]

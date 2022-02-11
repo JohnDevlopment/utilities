@@ -58,11 +58,7 @@ wm protocol . WM_DELETE_WINDOW {
 }
 wm minsize . 663 558
 
-#pack [ttk::notebook .nb] -fill both -expand 1
 place [ttk::notebook .nb] -relwidth 1 -relheight 0.95 -x 0 -rely 0.05
-
-
-
 
 source [file join $t_srcdir write.tk]
 source [file join $t_srcdir options.tk]
