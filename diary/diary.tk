@@ -18,17 +18,13 @@ source [file join $t_srcdir proc.tcl]
 
 
 settemp t_optlist {
-    { debug 0 "Enable debug logging" }
-    { loglevel.arg debug "Set logging level" }
+    { loglevel.arg "" "Set logging level" }
 }
 
 Options::getoptions $t_optlist options argv
 
-if {$options(debug)} {
+if {$options(loglevel) ne ""} {
     jdebug::on
-    if {$options(loglevel) eq ""} {
-        error "No loglevel provided"
-    }
     jdebug::level $options(loglevel)
 }
 
