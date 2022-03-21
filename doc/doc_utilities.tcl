@@ -2,7 +2,7 @@
 [vset pkgVer "1.1`"]
 [manpage_begin utilities n [vset version]]
 [require utilities [opt [vset pkgVer]]]
-[copyright "John Russell 2021"]
+[include copyright.tcl]
 [moddesc "Tcl Utility Functions"]
 [titledesc "Tcl Utility Functions"]
 [description]

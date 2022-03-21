@@ -2,7 +2,7 @@
 [vset vtag 1.0]
 [manpage_begin WidgetMapper n [vset version]]
 [require widgetmapper [opt [vset vtag]]]
-[copyright "John Russell 2021"]
+[include copyright.tcl]
 [moddesc "Tk Widget Mapper"]
 [description]
 This package provides functions to recursively search for widgets.

@@ -1,6 +1,6 @@
 [manpage_begin exWidgets n "0.1.0-beta"]
 [titledesc "Internal functions in the exWidgets namespace"]
-[copyright "John Russell 2021"]
+[include copyright.tcl]
 [moddesc "Expanded Tk Widgets"]
 [description]
 This man page describes all of the internal functions that can be found in the
