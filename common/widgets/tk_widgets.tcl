@@ -18,9 +18,6 @@ source [file join $dir tk_pack.tcl]
 source [file join $dir tk_state.tcl]
 source [file join $dir tk_subcmd.tcl]
 
-# TODO: make progressbar dialog command
-# TODO: make progressbar widget
-
 namespace eval exWidgets {
     variable packinfo
     variable alias
