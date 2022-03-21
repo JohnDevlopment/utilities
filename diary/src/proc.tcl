@@ -340,7 +340,10 @@ proc printStatusbar {idx msg {timer -1}} {
     set w [lindex $temp $idx]
     $w configure -text $msg
     if {$timer > 0} {
-        after $timer [list $w configure -text ""]
+        global StatusBarTimer
+        $StatusBarTimer set_script [list $w configure -text ""]
+        $StatusBarTimer start [expr "double($timer) / 1000.0"]
+        #after $timer [list $w configure -text ""]
     }
 }
 

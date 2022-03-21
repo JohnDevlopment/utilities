@@ -6,7 +6,7 @@ package require json
 package require json::write
 package require inifile
 package require jdebug
-#package require cmdline
+package require timer
 
 const RootDir [file dirname [file normalize $argv0]]
 const DateFormat "%D %l:%M:%S %p"
@@ -30,6 +30,7 @@ if {$options(loglevel) ne ""} {
 
 wm title . Diary
 wm protocol . WM_DELETE_WINDOW {
+    catch {$StatusBarTimer destroy}
     if {$FileModified} {
         set yn [tk_messageBox -parent . -title "Unsaved Changes" -type yesnocancel -icon question \
             -message "You have unsaved changes. Do you want to save those changes?"]
