@@ -10,7 +10,6 @@ set TIMERDIR [file dirname [lindex [dict get [info frame -1] cmd] 1]]
 
 namespace eval ::priv::Timer {
     variable refcount 0
-    variable lastTime
     variable timers
 
     proc _enableProcess {} {
@@ -46,18 +45,6 @@ namespace eval ::priv::Timer {
         set timers [lmap timer $timers {
             if {$timer ne $obj} {set timer}
         }]
-    }
-
-    proc getSeconds {} {
-        return [expr "double([clock milliseconds]) / 1000.0"]
-    }
-
-    proc getDelta {} {
-        variable lastTime
-        set newTime [getSeconds]
-        set delta [expr "double($newTime) - double($lastTime)"]
-        set lastTime $newTime
-        return $delta
     }
 }
 
