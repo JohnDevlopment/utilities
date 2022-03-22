@@ -333,17 +333,26 @@ proc printErrorToStdout {msg {detail ""}} {
 #   0 = entryMod
 #   1 = fileMod
 #   2 = dir
-proc printStatusbar {idx msg {timer -1}} {
+proc printStatusbar {idx msg {time -1}} {
     set bar .nb.frame1.statusbar
     set temp [list $bar.entryMod $bar.fileMod $bar.dir]
     assert {$idx >= 0 && $idx < 3} "Invalid index $idx"
     set w [lindex $temp $idx]
     $w configure -text $msg
-    if {$timer > 0} {
-        global StatusBarTimer
-        $StatusBarTimer set_script [list $w configure -text ""]
-        $StatusBarTimer start [expr "double($timer) / 1000.0"]
-        #after $timer [list $w configure -text ""]
+    if {$time > 0} {
+        global StatusBarTimers
+        set timer [lindex $StatusBarTimers $idx]
+        $timer start [expr "double($time) / 1000.0"]
+    }
+}
+
+proc initStatusbar {} {
+    global StatusBarTimers
+    set bar .nb.frame1.statusbar
+    foreach w [list $bar.entryMod $bar.fileMod $bar.dir] timer $StatusBarTimers {
+        $w configure -text ""
+        assert {$timer ne ""} "\$timer is empty"
+        $timer set_script [list $w configure -text ""]
     }
 }
 
