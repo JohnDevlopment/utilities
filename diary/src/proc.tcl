@@ -336,7 +336,7 @@ proc printErrorToStdout {msg {detail ""}} {
 proc printStatusbar {idx msg {time -1}} {
     set bar .nb.frame1.statusbar
     set temp [list $bar.entryMod $bar.fileMod $bar.dir]
-    assert {$idx >= 0 && $idx < 3} "Invalid index $idx"
+    assert {$idx >= 0 && $idx <= 2} "Invalid index $idx"
     set w [lindex $temp $idx]
     $w configure -text $msg
     if {$time > 0} {
