@@ -439,3 +439,25 @@ proc textboxFocused {wgt script} {
         uplevel [string map [list %W $fw] $script]
     }
 }
+
+bind Text <Return> {
+    tk::TextInsert %W "\n[tk::TextGetLeadingSpace %W]"
+    if {[%W cget -autoseparators]} {
+        %W edit separator
+    }
+}
+
+bind Text <Shift-Return> {
+    tk::TextInsert %W \n
+    if {[%W cget -autoseparators]} {
+        %W edit separator
+    }
+}
+
+proc tk::TextGetLeadingSpace {w} {
+    set lineToCursor [$w get "insert linestart" "insert lineend"]
+    if {[regexp {^[ \t]+} $lineToCursor lineSpaces]} {
+        return $lineSpaces
+    }
+    return
+}
