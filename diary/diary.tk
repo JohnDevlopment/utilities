@@ -116,11 +116,4 @@ place .menuButtons -x 0 -y 0 -relwidth 1 -relheight 0.05
 
 #bind . <3> {puts [wm geometry .]}
 
-try {
-    initStatusbar
-} on error {err errinfo} {
-    displayError $err -title "initStatusbar error" -detail [dict get $errinfo -errorinfo]
-}
-unset -nocomplain err errinfo
-
 after idle {initStatusbar; openConfig}
