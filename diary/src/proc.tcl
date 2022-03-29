@@ -329,31 +329,73 @@ proc printErrorToStdout {msg {detail ""}} {
     }
 }
 
+namespace eval ::priv::statusbar {
+    variable fileModTimer
+    variable entryModTimer
+    variable bar .nb.frame1.statusbar
+
+    proc cleanup {} {
+        variable fileModTimer
+        variable entryModTimer
+
+        $fileModTimer destroy
+        $entryModTimer destroy
+
+        set fileModTimer ""
+        set entryModTimer ""
+    }
+}
+
 # idx:
 #   0 = entryMod
 #   1 = fileMod
 #   2 = dir
+# time: delay in ms
+#   if <= 0: no effect
 proc printStatusbar {idx msg {time -1}} {
-    set bar .nb.frame1.statusbar
-    set temp [list $bar.entryMod $bar.fileMod $bar.dir]
+    namespace upvar ::priv::statusbar bar bar
+
     assert {$idx >= 0 && $idx <= 2} "Invalid index $idx"
+
+    set temp [list $bar.entryMod $bar.fileMod $bar.dir]
     set w [lindex $temp $idx]
     $w configure -text $msg
+    unset temp
+
     if {$time > 0} {
-        global StatusBarTimers
-        set timer [lindex $StatusBarTimers $idx]
-        $timer start [expr "double($time) / 1000.0"]
+        set time [expr "double($time) / 1000.0"]
+
+        switch $idx {
+            0 {
+                namespace upvar ::priv::statusbar entryModTimer EntryModTimer
+                $EntryModTimer start $time
+            }
+            1 {
+                namespace upvar ::priv::statusbar fileModTimer FileModTimer
+                $FileModTimer start $time
+            }
+            default {
+                jdebug::print warn "printStatusbar: Index $idx does not support a timer, only 0 and 1"
+            }
+        }
+        update
     }
 }
 
 proc initStatusbar {} {
-    global StatusBarTimers
-    set bar .nb.frame1.statusbar
-    foreach w [list $bar.entryMod $bar.fileMod $bar.dir] timer $StatusBarTimers {
-        $w configure -text ""
-        assert {$timer ne ""} "\$timer is empty"
-        $timer set_script [list $w configure -text ""]
-    }
+    namespace upvar ::priv::statusbar fileModTimer FileModTimer
+    namespace upvar ::priv::statusbar entryModTimer EntryModTimer
+    namespace upvar ::priv::statusbar bar bar
+
+    foreach w [list $bar.entryMod $bar.fileMod $bar.dir] {$w configure -text ""}
+
+    set EntryModTimer [Timer new]
+    $EntryModTimer set_script [list $bar.entryMod configure -text ""]
+    $EntryModTimer start 0.5
+
+    set FileModTimer [Timer new]
+    $FileModTimer set_script [list $bar.fileMod configure -text ""]
+    $FileModTimer start 0.5
 }
 
 proc processFlag {name1 name2 op} {

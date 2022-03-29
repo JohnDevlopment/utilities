@@ -5,7 +5,6 @@ set CurrentDir [pwd]
 set FileData ""
 set FileModified 0
 set EntryModified 0
-set StatusBarTimers [list [Timer new] [Timer new] [Timer new]]
 
 trace add variable CurrentFile write [lambda {name n op} {
     upvar #0 $name Var
