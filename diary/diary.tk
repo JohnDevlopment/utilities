@@ -16,16 +16,18 @@ settemp t_srcdir [file join $RootDir src]
 source [file join $t_srcdir globals.tcl]
 source [file join $t_srcdir proc.tcl]
 
-
 settemp t_optlist {
     { loglevel.arg "" "Set logging level" }
 }
 
 Options::getoptions $t_optlist options argv
 
+# enable logging
+jdebug::on
 if {$options(loglevel) ne ""} {
-    jdebug::on
     jdebug::level $options(loglevel)
+} else {
+    jdebug::level info
 }
 
 wm title . Diary
