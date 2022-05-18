@@ -255,9 +255,7 @@ namespace eval ::deletequeue {
     proc processQueue {} {
         variable vars
         variable afterid ""
-
-        # TODO: could we concatenate a string to unset these variables in one call?
-        foreach v $vars {unset -nocomplain $v}
+        unset -nocomplain {*}$vars
         set vars ""
     }
 
