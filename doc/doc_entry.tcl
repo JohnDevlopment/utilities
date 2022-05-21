@@ -9,7 +9,7 @@
 [include widgets-options-header.tcl]
 
 [list_begin opt]
-[opt_def -allowedchars]
+[opt_def -allowedchars [arg expr]]
 If this option is present, it defines a regular expression which specifies what characters are
 allowed to be inserted.
 It is matched against each character as it is inserted, so the regular expression should be written
@@ -23,7 +23,7 @@ when pressed, clears all of the text inside the entry.
 If this option is provided, it specifies a textual string to display in a label above the entry widget.
 If the option is left out or is an empty string, no label is displayed.
 
-[opt_def -maxlen]
+[opt_def -maxlen [arg number]]
 If this option is provided, it specifies the maximum length of the text inside the entry.
 It must be greater than zero to take effect.
 When active, it causes the entry to reject the adding of characters when the length of the current

@@ -8,6 +8,9 @@ This command tests the widget's state.
 If [arg script] is not specified, this command returns 1 if the widget state matches [arg statespec] and 0 otherwise.
 If [arg script] is specified, it is evaluated as a Tcl script if the widget state matches [arg statespec].
 
+[call exw subcmd [arg pathName] [arg subcommand] [opt args...]]
+Call one of the underlying [vset class]'s underlying commands, if it is not one of the commands listed here.
+
 [call exw state [arg pathName] [arg statespec]]
 Modifies the widget state.
 For the [widget text] widget, [arg statespec] can be either normal or disabled.
