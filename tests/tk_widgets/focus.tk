@@ -1,0 +1,7 @@
+package require tk_widgets
+
+wm geometry . 500x240
+
+exw pack [exw entry .sdak]
+
+after 1000 {exw focus .sdak}

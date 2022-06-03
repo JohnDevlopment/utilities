@@ -11,6 +11,7 @@ namespace eval ::exWidgets {}
 
 source [file join $dir tk_bind.tcl]
 source [file join $dir tk_entry.tcl]
+source [file join $dir tk_focus.tcl]
 source [file join $dir tk_grid.tcl]
 source [file join $dir tk_tree.tcl]
 source [file join $dir tk_text.tcl]
@@ -29,6 +30,7 @@ namespace eval exWidgets {
         -map {
             bind    tk_bind
             entry   tk_entry
+            focus   tk_focus
             grid    tk_grid
             pack    tk_pack
             state   tk_state
