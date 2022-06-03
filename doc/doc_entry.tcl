@@ -9,7 +9,7 @@
 [include widgets-options-header.tcl]
 
 [list_begin opt]
-[opt_def -allowedchars [arg expr]]
+[opt_def -allowedchars [arg pattern]]
 If this option is present, it defines a regular expression which specifies what characters are
 allowed to be inserted.
 It is matched against each character as it is inserted, so the regular expression should be written
