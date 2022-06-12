@@ -1,6 +1,7 @@
 # tk_entry ?switches? pathName ?ttk_entrySwitches ...?
 proc ::exWidgets::tk_entry {args} {
     variable identifiers
+    variable python
 
     set specs {
         {maxlen.arg 0}
@@ -38,7 +39,7 @@ proc ::exWidgets::tk_entry {args} {
     unset id
 
     # Invalid path name?
-    if {[catch {ttk::frame $pathname} err]} {
+    if {! $python && [catch {ttk::frame $pathname} err]} {
         unset identifiers($pathname)
         return -code error -errorcode [list TCL INVALID PARAM $pathname] $err
     }

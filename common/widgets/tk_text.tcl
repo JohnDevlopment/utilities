@@ -1,6 +1,7 @@
 # tk_text ?options? path ?identifier? ?text_options?
 proc ::exWidgets::tk_text {args} {
     variable identifiers
+    variable python
 
     set specs {
         {wrap.arg char}
@@ -37,7 +38,7 @@ proc ::exWidgets::tk_text {args} {
     unset id
 
     # Invalid path name?
-    if {[catch {ttk::frame $pathname} err]} {
+    if {! $python && [catch {ttk::frame $pathname} err]} {
         unset identifiers($pathname)
         return -code error -errorcode [list TCL INVALID PARAM $pathname] $err
     }

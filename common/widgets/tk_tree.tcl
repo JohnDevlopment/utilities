@@ -2,6 +2,7 @@
 #   -headings {column text ...}
 proc ::exWidgets::tk_tree args {
     variable identifiers
+    variable python
 
     set specs {
         scrolly
@@ -45,7 +46,7 @@ proc ::exWidgets::tk_tree args {
     }
 
     # Invalid path name?
-    if {[catch {ttk::frame $pathname} err]} {
+    if {! $python && [catch {ttk::frame $pathname} err]} {
         unset identifiers($pathname)
         return -code error -errorcode [list TCL INVALID PARAM $pathname] $err
     }

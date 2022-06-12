@@ -24,6 +24,7 @@ namespace eval exWidgets {
     variable alias
     variable commands {tk_entry tk_pack tk_text tk_state tk_subcmd}
     variable identifiers
+    variable python 0
 
     namespace export -clear tk_*
     namespace ensemble create -command ::exw \
