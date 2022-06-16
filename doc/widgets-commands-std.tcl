@@ -3,10 +3,11 @@
 [call exw [vset class] [opt [arg options]] [arg pathName] [opt [arg identifier]] [opt [arg options]]]
 This function creates the widget; it is described thoroughly in [sectref Description].
 
-[call exw subcmd [arg pathName] instate [arg statespec] [opt [arg script]]]
+[call exw instate [arg pathName] [arg statespec] [opt [arg script]]]
 This command tests the widget's state.
 If [arg script] is not specified, this command returns 1 if the widget state matches [arg statespec] and 0 otherwise.
-If [arg script] is specified, it is evaluated as a Tcl script if the widget state matches [arg statespec].
+If [arg script] is specified, equivelent to
+[example "if {\[exw instate [arg pathname] [arg statespec]]} [arg script]"]
 
 [call exw subcmd [arg pathName] [arg subcommand] [opt args...]]
 Call one of the underlying [vset class]'s underlying commands, if it is not one of the commands listed here.

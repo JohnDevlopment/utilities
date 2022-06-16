@@ -13,6 +13,7 @@ source [file join $dir tk_bind.tcl]
 source [file join $dir tk_entry.tcl]
 source [file join $dir tk_focus.tcl]
 source [file join $dir tk_grid.tcl]
+source [file join $dir tk_instate.tcl]
 source [file join $dir tk_tree.tcl]
 source [file join $dir tk_text.tcl]
 source [file join $dir tk_pack.tcl]
@@ -22,7 +23,7 @@ source [file join $dir tk_subcmd.tcl]
 namespace eval exWidgets {
     variable packinfo
     variable alias
-    variable commands {tk_entry tk_pack tk_text tk_state tk_subcmd}
+    variable commands {tk_bind tk_entry tk_focus tk_grid tk_instate tk_pack tk_state tk_text tk_state tk_subcmd tk_text tk_tree}
     variable identifiers
     variable python 0
 
@@ -33,6 +34,7 @@ namespace eval exWidgets {
             entry   tk_entry
             focus   tk_focus
             grid    tk_grid
+	    instate tk_instate
             pack    tk_pack
             state   tk_state
             subcmd  tk_subcmd
