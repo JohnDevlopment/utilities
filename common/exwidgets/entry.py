@@ -63,8 +63,7 @@ class ExEntry(ExWidget):
 
 if __name__ == "__main__":
     import sys
-    import re
-    from ._test import _detect_help
+    from ._test import _detect_help, test_entry
     from tkinter import Tk
 
     print("Testing ExEntry...")
@@ -84,7 +83,4 @@ if __name__ == "__main__":
         opts[opt] = arg
         i += 2
         
-    root = Tk()
-    text = ExEntry(root, opts)
-    text.pack(fill='x')
-    root.mainloop()
+    test_entry(Tk(), opts)

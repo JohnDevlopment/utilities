@@ -4,6 +4,8 @@ Contains helper functions.
 """
 import re
 from .text import ExText
+from .entry import ExEntry
+from tkinter import ttk, StringVar
 
 _help_re = re.compile('-[h?]|--help')
 
@@ -17,6 +19,26 @@ def _detect_help(args: list, cls: str) -> bool:
         return True
 
     return False
+
+def test_entry(root, opts):
+    entry = ExEntry(root, opts)
+    entry.pack()
+
+    b = ttk.Button(root, text='Focus entry', command=lambda: entry.focus())
+    b.pack()
+
+    var = StringVar()
+    label = ttk.Label(root, textvariable=var)
+    label.pack()
+
+    def _label(v, r):
+        w = r.focus_displayof()
+        v.set(w)
+
+    b = ttk.Button(root, text='Current focus', command=lambda: _label(var, root))
+    b.pack()
+    
+    root.mainloop()
 
 def test_text(root, opts):
     text = ExText(root, opts)

@@ -178,3 +178,31 @@ class ExTree(ExWidget):
         if type is not Pattern.GLOB:
             opts.insert(1, '-' + type)
         self._tk.call('exw', 'subcmd', self._widget, 'search', *opts)
+
+if __name__ == "__main__":
+    import sys
+    import re
+    from ._test import _detect_help
+    from tkinter import Tk
+
+    print("Testing ExTree...")
+    args = sys.argv[1:]
+    opts = {}
+
+    # Detect -h|-?|--help
+    if _detect_help(args, 'ExTree'):
+        sys.exit()
+
+    if (len(args) % 1):
+        raise ValueError("Must be even number of arguments")
+
+    i = 0
+    while i < len(args):
+        (opt, arg) = args[i:i+2]
+        opts[opt] = arg
+        i += 2
+        
+    root = Tk()
+    text = ExTree(root, opts)
+    text.pack(fill='both')
+    root.mainloop()
