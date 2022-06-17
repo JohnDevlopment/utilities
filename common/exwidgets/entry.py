@@ -60,3 +60,31 @@ class ExEntry(ExWidget):
     def __str__(self) -> str:
         """Returns the string path of the widget."""
         return self._widget._w
+
+if __name__ == "__main__":
+    import sys
+    import re
+    from ._test import _detect_help
+    from tkinter import Tk
+
+    print("Testing ExEntry...")
+    args = sys.argv[1:]
+    opts = {}
+
+    # Detect -h|-?|--help
+    if _detect_help(args, 'ExEntry'):
+        sys.exit()
+
+    if (len(args) % 1):
+        raise ValueError("Must be even number of arguments")
+
+    i = 0
+    while i < len(args):
+        (opt, arg) = args[i:i+2]
+        opts[opt] = arg
+        i += 2
+        
+    root = Tk()
+    text = ExEntry(root, opts)
+    text.pack(fill='x')
+    root.mainloop()
