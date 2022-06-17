@@ -6,7 +6,7 @@ entry = ExEntry(root)
 """
 
 import _tkinter
-from tkinter import Tk, _cnfmerge, _stringify, _get_default_root, CallWrapper
+from tkinter import Tk, CallWrapper, _cnfmerge, _stringify, _get_default_root, _flatten
 from tkinter.ttk import _val_or_dict
 
 TclError = _tkinter.TclError
@@ -37,6 +37,8 @@ class ExWidget:
     # Use self._tk.call to use raw Tcl commands
 
     _options = Tk._options
+    _substitute = Tk._substitute
+    _subst_format_str = Tk._subst_format_str
 
     _substitute = Tk._substitute
     _subst_format_str = Tk._subst_format_str
@@ -52,7 +54,6 @@ class ExWidget:
         if master is None:
             master = _get_default_root("instance a widget")
         self._tk = master.tk
-
         self._tclCommands = []
 
         if kw:
@@ -75,8 +76,25 @@ class ExWidget:
             except TclError as exc:
                 raise RuntimeError(str(exc))
             self._tk.call('set', '::exWidgets::python', True)
+            packageLoaded = True
 
-            packageLoaded = True    
+    def _bind(self, what, sequence, func, add, needcleanup=1):
+        """Internal function."""
+        if isinstance(func, str):
+            self._tk.call(what + (sequence, func))
+        elif func:
+            funcid = self._register(func, self._substitute,
+                        needcleanup)
+            cmd = ('%sif {"[%s %s]" == "break"} break\n'
+                   %
+                   (add and '+' or '',
+                funcid, self._subst_format_str))
+            self._tk.call(what + (sequence, cmd))
+            return funcid
+        elif sequence:
+            return self._tk.call(what + (sequence,))
+        else:
+            return self._tk.splitlist(self._tk.call(what))
 
     def _register(self, func, subst=None, needcleanup=1):
         """Return a newly created Tcl function. If this
@@ -201,81 +219,6 @@ class ExWidget:
         """Returns the string path of the widget."""
         return self._widget._w
 
-    def _bind(self, what, sequence, func, add, needcleanup=1):
-        """Internal function."""
-        if isinstance(func, str):
-            self._tk.call(what + (sequence, func))
-        elif func:
-            funcid = self._register(func, self._widget._substitute,
-                        needcleanup)
-            cmd = ('%sif {"[%s %s]" == "break"} break\n'
-                   %
-                   (add and '+' or '',
-                funcid, self._widget._subst_format_str))
-            self._tk.call(what + (sequence, cmd))
-            return funcid
-        elif sequence:
-            return self._tk.call(what + (sequence,))
-        else:
-            return self._tk.splitlist(self._tk.call(what))
-
-    def _register(self, func, subst=None, needcleanup=1):
-        """Return a newly created Tcl function. If this
-        function is called, the Python function FUNC will
-        be executed. An optional function SUBST can
-        be given which will be executed before FUNC."""
-        f = CallWrapper(func, subst, self._widget).__call__
-        name = repr(id(f))
-
-        try:
-            func = func.__func__
-        except AttributeError:
-            pass
-
-        try:
-            name = name + func.__name__
-        except AttributeError:
-            pass
-
-        self._tk.createcommand(name, f)
-
-        if needcleanup:
-            if self._tclCommands is None:
-                self._tclCommands = []
-            self._tclCommands.append(name)
-
-        return name
-
-    def _options(self, cnf, kw=None):
-        """Internal function."""
-        if kw:
-            cnf = _cnfmerge((cnf, kw))
-        else:
-            cnf = _cnfmerge(cnf)
-        res = ()
-        for k, v in cnf.items():
-            if v is not None:
-                if k[-1] == '_': k = k[:-1]
-                if callable(v):
-                    v = self._register(v)
-                elif isinstance(v, (tuple, list)):
-                    nv = []
-                    for item in v:
-                        if isinstance(item, int):
-                            nv.append(str(item))
-                        elif isinstance(item, str):
-                            nv.append(_stringify(item))
-                        else:
-                            break
-                    else:
-                        v = ' '.join(nv)
-                elif isinstance(v, bool):
-                    if v:
-                        res = res + ('-'+k,)
-                        continue
-                res = res + ('-'+k, v)
-        return res
-    
     def _configure(self, cmd, cnf, kw):
         """Internal function."""
         if kw:
@@ -295,10 +238,3 @@ class ExWidget:
         """Internal function."""
         x = self._tk.splitlist(self._tk.call(*args))
         return (x[0][1:],) + x[1:]
-
-    def _report_exception(self):
-        """Internal function."""
-        self._widget._report_exception()
-
-    def _substitute(self):
-        """Internal function."""
