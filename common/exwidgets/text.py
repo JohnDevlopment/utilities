@@ -7,6 +7,7 @@ class ExText(ExWidget):
     ExText builds on top of the text widget, adding some features such as
     automatic scrollbars.
     """
+
     def __init__(self, master, cnf={}, **kwargs):
         """Construct and initialize a text widget under its master.
 
@@ -67,6 +68,7 @@ class ExText(ExWidget):
                     exOpts.append(str(v))
             else:
                 textOpts.append('-' + k)
+                textOpts.append(str(v))
 
         frame = tk.ttk.Frame(self._master)
 
@@ -169,24 +171,26 @@ class ExText(ExWidget):
 
 if __name__ == "__main__":
     import sys
-    import re
     from ._test import _detect_help, test_text
 
     print("Testing ExText...")
     args = sys.argv[1:]
     opts = {}
 
-    # Detect -h|-?|--help
-    if _detect_help(args, 'ExText'):
+    help_re = re.compile('-[h?]|--help')
+    if help_re.search(','.join(args)) is not None:
+        print("### Help ###")
+        print("Any arguments are treated as options for ExText.",
+              "Check the relevent doc for details.")
         sys.exit()
 
     if (len(args) % 1):
         raise ValueError("Must be even number of arguments")
 
-    i = 0
-    while i < len(args):
-        (opt, arg) = args[i:i+2]
-        opts[opt] = arg
-        i += 2
-
-    test_text(tk.Tk(), opts)
+    for i in range(len(args)):
+        arg = args[i]
+        
+    root = tk.Tk()
+    text = ExText(root)
+    text.pack(fill='both')
+    root.mainloop()

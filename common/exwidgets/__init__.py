@@ -37,6 +37,7 @@ class ExWidget:
     # Use self._tk.call to use raw Tcl commands
 
     _options = Tk._options
+
     _substitute = Tk._substitute
     _subst_format_str = Tk._subst_format_str
     _subst_format = Tk._subst_format
@@ -74,7 +75,65 @@ class ExWidget:
             except TclError as exc:
                 raise RuntimeError(str(exc))
             self._tk.call('set', '::exWidgets::python', True)
-            packageLoaded = True
+
+            packageLoaded = True    
+
+    def _register(self, func, subst=None, needcleanup=1):
+        """Return a newly created Tcl function. If this
+        function is called, the Python function FUNC will
+        be executed. An optional function SUBST can
+        be given which will be executed before FUNC."""
+        f = CallWrapper(func, subst, self).__call__
+        name = repr(id(f))
+
+        try:
+            func = func.__func__
+        except AttributeError:
+            pass
+
+        try:
+            name = name + func.__name__
+        except AttributeError:
+            pass
+
+        self._tk.createcommand(name, f)
+
+        if needcleanup:
+            if self._tclCommands is None:
+                self._tclCommands = []
+            self._tclCommands.append(name)
+
+        return name
+
+    def _options(self, cnf, kw=None):
+        """Internal function."""
+        if kw:
+            cnf = _cnfmerge((cnf, kw))
+        else:
+            cnf = _cnfmerge(cnf)
+        res = ()
+        for k, v in cnf.items():
+            if v is not None:
+                if k[-1] == '_': k = k[:-1]
+                if callable(v):
+                    v = self._register(v)
+                elif isinstance(v, (tuple, list)):
+                    nv = []
+                    for item in v:
+                        if isinstance(item, int):
+                            nv.append(str(item))
+                        elif isinstance(item, str):
+                            nv.append(_stringify(item))
+                        else:
+                            break
+                    else:
+                        v = ' '.join(nv)
+                elif isinstance(v, bool):
+                    if v:
+                        res = res + ('-'+k,)
+                        continue
+                res = res + ('-'+k, v)
+        return res
 
     def instate(self, stateSpec, callback=None, *args, **kwargs):
         """Test the widget's state.
@@ -243,4 +302,3 @@ class ExWidget:
 
     def _substitute(self):
         """Internal function."""
-        
