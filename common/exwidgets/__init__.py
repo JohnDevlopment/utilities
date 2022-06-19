@@ -78,6 +78,75 @@ class ExWidget:
             self._tk.call('set', '::exWidgets::python', True)
             packageLoaded = True
 
+    def instate(self, stateSpec, callback=None, *args, **kwargs):
+        """Test the widget's state.
+
+        If CALLBACK is not specified, returns true if the widget state
+        matches STATESPEC. If CALLBACK is specified, then it will be invoked
+        if the widget state matches STATESPEC with *ARGS and **KWARGS.
+        STATESPEC is expected to be a sequence.
+        """
+        ret = self._tk.getboolean(
+            self._tk.call('exw', 'instate', self._widget, ' '.join(statespec)))
+        if ret and callback is not None:
+            return callback(*args, **kwargs)
+
+        return ret
+
+    def pack(self, cnf={}, **kwargs):
+        """Pack the widget in the parent widget using exw pack.
+
+        Options include:
+        after=widget - pack it after you have packed widget
+        anchor=NSEW (or subset) - position widget according to given direction
+        before=widget - pack it before you will pack widget
+        expand=bool - expand widget if parent size grows
+        fill=NONE or X or Y or BOTH - fill widget if widget grows
+        in=master - use master to contain this widget
+        in_=master - see 'in' option description
+        ipadx=amount - add internal padding in x direction
+        ipady=amount - add internal padding in y direction
+        padx=amount - add padding in x direction
+        pady=amount - add padding in y direction
+        side=TOP or BOTTOM or LEFT or RIGHT -  where to add this widget.
+        """
+        self._tk.call(
+            ('exw', 'pack', self._widget) + self._options(cnf, kwargs)
+        )
+
+    def state(self, stateSpec=None):
+        """Modify the widget's state.
+
+        Widget state is returned if STATESPEC is None, otherwise it is set
+        according to the rules outlined below. The returned value follows the same
+        rules as STATESPEC.
+
+        STATESPEC Rules
+            If the underlying widget is a ttk widget, then STATESPEC is
+            a sequence of statespec flags, but for non-ttk widgets STATESPEC is
+            either 'normal' or 'disabled'.
+        """
+        if isinstance(stateSpec, (list, tuple)):
+            stateSpec = ' '.join(stateSpec)
+        
+        return self._tk.splitlist(
+            self._tk.call('exw', 'state', self._widget, stateSpec))
+
+    def subcmd(self, cmd: str, *args):
+        """Calls one of the widget's commands.
+
+        Said command can be one of the standard commands supplied by Tk or one of the
+        extended widget commands.
+        """
+        res = self._tk.call('exw', 'subcmd', self._widget, cmd, *args)
+        if isinstance(res, _tkinter.Tcl_Obj):
+            res = str(res)
+        return res
+
+    def __str__(self) -> str:
+        """Returns the string path of the widget."""
+        return self._widget._w
+
     def _bind(self, what, sequence, func, add, needcleanup=1):
         """Internal function."""
         if isinstance(func, str):
@@ -238,3 +307,11 @@ class ExWidget:
         """Internal function."""
         x = self._tk.splitlist(self._tk.call(*args))
         return (x[0][1:],) + x[1:]
+
+    def _report_exception(self):
+        """Internal function."""
+        self._widget._report_exception()
+
+    #def _substitute(self):
+    #    """Internal function."""
+    #    
