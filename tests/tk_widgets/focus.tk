@@ -2,6 +2,10 @@ package require tk_widgets
 
 wm geometry . 500x240
 
-exw pack [exw entry .sdak]
+exw pack [exw entry .entry]
 
-after 1000 {exw focus .sdak}
+pack [ttk::button .b1 -text "Steal focus"]
+
+pack [ttk::button .b2 -text "Focus entry" -command {
+     puts [exw focus .entry]
+}]
