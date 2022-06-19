@@ -78,6 +78,45 @@ class ExWidget:
             self._tk.call('set', '::exWidgets::python', True)
             packageLoaded = True
 
+    def focus_displayof(self):
+        """Returns the widget that has the focus on the same display as this widget.
+
+        Returns None if the application does not have the focus.
+        """
+        name = self._tk.call('exw', 'focus', '-displayof', self._widget)
+        if name == 'none' or not name:
+            return None
+        return self._widget.nametowidget(name)
+
+    def focus_force(self):
+        """Direct input focus to this widget even if the application does not
+        have the focus.
+
+        This command should be used sparingly, if at all. In normal usage,
+        an application should not claim the focus for itself; instead it should wait
+        to get the focus from the window manager.
+        """
+        self._tk.call('exw', 'focus', '-force', self._widget)
+
+    def focus_lastfor(self):
+        """Returns the widget which would have the focus if the top level for this
+        widget gets the focus from the window manager."""
+        name = self._tk.call('exw', 'focus', '-lastfor', self._widget)
+        if name == 'none' or not name:
+            return None
+        return self._widget.nametowidget(name)
+
+    def focus_set(self):
+        """Direct input focus to this widget.
+
+        If the application currently does not have the focus
+        this widget will get the focus if the application gets the
+        focus through the window manager.
+        """
+        self._tk.call('exw', 'focus', self._widget)
+
+    focus = focus_set
+
     def instate(self, stateSpec, callback=None, *args, **kwargs):
         """Test the widget's state.
 
