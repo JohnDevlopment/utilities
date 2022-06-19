@@ -4,3 +4,4 @@ doc/html/
 doc/man/
 doc/md/
 *~
+__pycache__/
