@@ -182,6 +182,11 @@ class ExWidget:
             res = str(res)
         return res
 
+    @property
+    def master(self):
+        """The widget's master."""
+        return self._master
+
     def __str__(self) -> str:
         """Returns the string path of the widget."""
         return self._widget._w
