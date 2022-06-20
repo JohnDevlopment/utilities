@@ -1,8 +1,7 @@
 # tk_focus $pathname
 proc ::exWidgets::tk_focus {args} {
-    set pathname ""
     set args [lmap e $args {
-	if {[regexp {\.[a-zA-Z0-9_]+.*} $e]} {
+	if {[regexp {\..+} $e]} {
 	    set pathname $e
 	    continue
 	} else {set e $e}
