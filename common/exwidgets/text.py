@@ -88,8 +88,8 @@ class ExText(ExWidget):
 
     def tag_bind(self, tagName, sequence, func, add=None):
         """"""
-        return self._bind(('exw', 'subcmd', self._widget, 'tag', 'bind', tagName),
-                          sequence, func, add)
+        return self._widget._bind(('exw', 'subcmd', self._widget, 'tag', 'bind', tagName),
+                                  sequence, func, add)
 
     def tag_cget(self, tagName, option):
         """
@@ -177,11 +177,7 @@ if __name__ == "__main__":
     args = sys.argv[1:]
     opts = {}
 
-    help_re = re.compile('-[h?]|--help')
-    if help_re.search(','.join(args)) is not None:
-        print("### Help ###")
-        print("Any arguments are treated as options for ExText.",
-              "Check the relevent doc for details.")
+    if _detect_help(args, 'ExText'):
         sys.exit()
 
     if (len(args) % 1):
@@ -190,7 +186,4 @@ if __name__ == "__main__":
     for i in range(len(args)):
         arg = args[i]
         
-    root = tk.Tk()
-    text = ExText(root)
-    text.pack(fill='both')
-    root.mainloop()
+    test_text(tk.Tk(), opts)

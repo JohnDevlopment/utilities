@@ -39,9 +39,6 @@ class ExWidget:
     _options = Tk._options
     _substitute = Tk._substitute
     _subst_format_str = Tk._subst_format_str
-
-    _substitute = Tk._substitute
-    _subst_format_str = Tk._subst_format_str
     _subst_format = Tk._subst_format
 
     #_subst_format = ('%#', '%b', '%f', '%h', '%k',
