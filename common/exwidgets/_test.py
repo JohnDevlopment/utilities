@@ -66,11 +66,16 @@ def test_entry(root, opts):
     label = ttk.Label(root, textvariable=var)
     label.pack()
 
-    def _label(v, r):
-        w = r.focus_displayof()
-        v.set(w)
+    def _label(text):
+        text = str(text)
+        var.set(text)
 
-    b = ttk.Button(root, text='Current focus', command=lambda: _label(var, root))
+    b = ttk.Button(root, text='Current focus',
+                   command=lambda: _label(root.focus_displayof()))
+    b.pack()
+
+    b = ttk.Button(root, text='Entry Selection Bool',
+                   command=lambda: _label(entry.select_present()))
     b.pack()
     
     root.mainloop()
