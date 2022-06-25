@@ -57,9 +57,37 @@ class ExEntry(ExWidget):
         self._tk.call('exw', 'entry', *exOpts, str(frame), *entryOpts)
         self._widget = frame
 
-    def __str__(self) -> str:
-        """Returns the string path of the widget."""
-        return self._widget._w
+    def selection_adjust(self, index):
+        """Adjust the end of the selection near the cursor to INDEX."""
+        return self.subcmd('selection', 'adjust', index)
+
+    select_adjust = selection_adjust
+
+    def selection_clear(self):
+        """Clear the selection if it is in this widget."""
+        return self.subcmd('selection', 'clear')
+
+    select_clear = selection_clear
+
+    def selection_from(self, index):
+        """Set the fixed end of a selection to INDEX."""
+        return self.subcmd('selection', 'from', index)
+
+    select_from = selection_from
+
+    def selection_present(self):
+        """Return True if there are characters selected in the entry, False
+        otherwise."""
+        return self._tk.getboolean(
+            self.subcmd('selection', 'present'))
+
+    select_present = selection_present
+
+    def selection_range(self, start, end):
+        """Set the selection from START to END (not included)."""
+        return self.subcmd('selection', 'range', start, end)
+
+    select_range = selection_range
 
 if __name__ == "__main__":
     import sys
