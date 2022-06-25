@@ -54,6 +54,17 @@ class ExWidget:
             self._tk.call('set', '::exWidgets::python', True)
             packageLoaded = True
 
+    def deletecommand(self, name: str):
+        """Internal function.
+
+        Delete the Tcl command provided by NAME.
+        """
+        self._tk.deletecommand(name)
+        try:
+            self._tclcommands.remove(name)
+        except ValueError:
+            pass
+
     def focus_displayof(self):
         """Returns the widget that has the focus on the same display as this widget.
 
