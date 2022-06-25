@@ -5,6 +5,7 @@ Contains helper functions.
 import re
 from .text import ExText
 from .entry import ExEntry
+from .dialog import ask_string, ask_integer, ask_float
 from tkinter import ttk, StringVar
 
 _help_re = re.compile('-[h?]|--help')
@@ -19,6 +20,40 @@ def _detect_help(args: list, cls: str) -> bool:
         return True
 
     return False
+
+def test_dialog(root, name: str):
+    root.update()
+    match name:
+        case 'getstring':
+            name = ask_string(
+                'Name',
+                'What Is Your Name?'
+            )
+            if name is None:
+                print('Okay, no-name')
+                return
+            print("Your name is", name)
+        case 'getfloat':
+            balance = ask_float(
+                'Balance',
+                'Current Balance'
+            )
+            if name is None:
+                print("No balance provided")
+                return
+            print("Current balance:", balance)
+        case 'getint':
+            pin = ask_integer(
+                'Nosy',
+                'Your Secret PIN',
+                text="Forgive me for being nosy, but what is your secret PIN number?",
+                minvalue=1234,
+                maxvalue=9999
+            )
+            if pin is None:
+                print('Well! Sorry for asking!')
+                return
+            print("I see. So your PIN number is '%s'. Thanks!" % pin)
 
 def test_entry(root, opts):
     entry = ExEntry(root, opts)
