@@ -70,7 +70,7 @@ class ExText(ExWidget, Pack, Grid):
                 textOpts.append('-' + k)
                 textOpts.append(str(v))
 
-        frame = tk.ttk.Frame(self._master)
+        frame = ttk.Frame(self._master)
 
         self._tk.call('exw', 'text', *exOpts, frame, *textOpts)
         self._widget = frame
@@ -87,12 +87,19 @@ class ExText(ExWidget, Pack, Grid):
             ('exw', 'subcmd', self._widget, 'tag', 'add', tagName, index1) + args)
 
     def tag_bind(self, tagName, sequence, func, add=None):
-        """"""
+        """Bind all characters with TAGNAME to event SEQUENCE with a function to call, FUNC.
+
+        If ADD is true, FUNC is added to the list of bound functions to call. Otherwise
+        it replaces the previously bound function.
+        """
         return self._widget._bind(('exw', 'subcmd', self._widget, 'tag', 'bind', tagName),
                                   sequence, func, add)
 
     def tag_cget(self, tagName, option):
-        """
+        """Returns one of TAGNAME's associated tag options.
+
+        OPTION may be one of the tag options listed in the section "TAG OPTIONS"
+        in the class section of this doc.
         """
         if option[:1] != '-':
             option = '-' + option
@@ -109,6 +116,8 @@ class ExText(ExWidget, Pack, Grid):
         specified.
         """
         return self._configure(('tag', 'configure', tagName), cnf, kwargs)
+
+    tag_config = tag_configure
 
     def tag_delete(self, *tagNames):
         """Delete all tags in TAGNAMES."""
@@ -168,6 +177,15 @@ class ExText(ExWidget, Pack, Grid):
     def tag_remove(self, tagName, index1, index2=None):
         """Remove tag TAGNAME from all characters between INDEX1 and INDEX2."""
         self._tk.call('exw', 'subcmd', self._widget, 'tag', 'remove', tagName, index1, index2)
+
+    def tag_unbind(self, tagName: str, sequence: str, funcid=None):
+        """Unbind event SEQUENCE from all characters with TAGNAME.
+
+        If FUNCID is provided, it specifies the function to unbind.
+        """
+        self._tk.call('exw', 'subcmd', self._widget, 'tag', 'bind', tagName, sequence, '')
+        if funcid:
+            self.deletecommand(funcid)
 
 if __name__ == "__main__":
     import sys
