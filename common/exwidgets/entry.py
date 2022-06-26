@@ -1,7 +1,7 @@
-from exwidgets import ExWidget
+from . import ExWidget, Pack, Grid
 from tkinter import ttk
 
-class ExEntry(ExWidget):
+class ExEntry(ExWidget, Pack, Grid):
     """Extended entry widget.
 
     ExEntry builds on top of the ttk::entry widget, adding some extra features such as a

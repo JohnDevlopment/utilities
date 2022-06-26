@@ -1,7 +1,7 @@
-from exwidgets import ExWidget
-import tkinter as tk
+from . import ExWidget, Pack, Grid
+from tkinter import ttk
 
-class ExText(ExWidget):
+class ExText(ExWidget, Pack, Grid):
     """Extended text widget.
 
     ExText builds on top of the text widget, adding some features such as

@@ -1,4 +1,4 @@
-from exwidgets import ExWidget, _val_or_dict
+from . import ExWidget, Pack, Grid, _val_or_dict
 from tkinter import ttk, _stringify
 from tkinter.ttk import _format_optdict
 from enum import Enum
@@ -9,7 +9,7 @@ class Pattern(Enum):
     REGEX = 'regex'
     EXACT = 'exact'
 
-class ExTree(ExWidget):
+class ExTree(ExWidget, Pack, Grid):
     """Extended treeview widget.
 
     ITEM OPTIONS

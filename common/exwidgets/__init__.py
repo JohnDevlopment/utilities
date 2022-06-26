@@ -124,27 +124,6 @@ class ExWidget:
         """The widget's master."""
         return self._master
 
-    def pack(self, cnf={}, **kwargs):
-        """Pack the widget in the parent widget using exw pack.
-
-        Options include:
-        after=widget - pack it after you have packed widget
-        anchor=NSEW (or subset) - position widget according to given direction
-        before=widget - pack it before you will pack widget
-        expand=bool - expand widget if parent size grows
-        fill=NONE or X or Y or BOTH - fill widget if widget grows
-        in=master - use master to contain this widget
-        in_=master - see 'in' option description
-        ipadx=amount - add internal padding in x direction
-        ipady=amount - add internal padding in y direction
-        padx=amount - add padding in x direction
-        pady=amount - add padding in y direction
-        side=TOP or BOTTOM or LEFT or RIGHT -  where to add this widget.
-        """
-        self._tk.call(
-            ('exw', 'pack', self._widget) + self._options(cnf, kwargs)
-        )
-
     def state(self, stateSpec=None):
         """Modify the widget's state.
 
@@ -276,3 +255,56 @@ class ExWidget:
     def __str__(self) -> str:
         """Returns the string path of the widget."""
         return self._widget._w
+
+class Pack:
+    """Geometry manager pack.
+
+    Base class to use the pack method in any widget.
+    """
+
+    def pack(self, cnf={}, **kwargs):
+        """Pack the widget in the parent widget using exw pack.
+
+        Options include:
+            after=widget - pack it after you have packed widget
+            anchor=NSEW (or subset) - position widget according to given direction
+            before=widget - pack it before you will pack widget
+            expand=bool - expand widget if parent size grows
+            fill=NONE or X or Y or BOTH - fill widget if widget grows
+            in=master - use master to contain this widget
+            in_=master - see 'in' option description
+            ipadx=amount - add internal padding in x direction
+            ipady=amount - add internal padding in y direction
+            padx=amount - add padding in x direction
+            pady=amount - add padding in y direction
+            side=TOP or BOTTOM or LEFT or RIGHT -  where to add this widget.
+        """
+        self._tk.call(
+            ('exw', 'pack', self._widget) + self._options(cnf, kwargs)
+        )
+
+class Grid:
+    """Geometry manager grid.
+
+    Base class to use the grid method in any widget.
+    """
+
+    def grid(self, cnf={}, **kwargs):
+        """Position a widget in the parent widget in a grid.
+
+        Options include:
+            column=number - use cell identified with given column (starting with 0)
+            columnspan=number - this widget will span several columns
+            in=master - use master to contain this widget
+            in_=master - see 'in' option description
+            ipadx=amount - add internal padding in x direction
+            ipady=amount - add internal padding in y direction
+            padx=amount - add padding in x direction
+            pady=amount - add padding in y direction
+            row=number - use cell identified with given row (starting with 0)
+            rowspan=number - this widget will span several rows
+            sticky=NSEW - if cell is larger on which sides will this
+                          widget stick to the cell boundary
+        """
+        self._tk.call(
+            ('exw', 'grid', self._widget) + self._options(cnf, kwargs))
