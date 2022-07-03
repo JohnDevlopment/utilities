@@ -191,6 +191,31 @@ class ExTree(ExWidget, Pack, Grid):
             opts.insert(1, '-' + type)
         self._tk.call('exw', 'subcmd', self._widget, 'search', *opts)
 
+    def _selection(self, selop, items):
+        if len(items) == 1 and isinstance(items[0], (tuple, items)):
+            items = items[0]
+        return self._tk.call('exw', 'subcmd', self._widget, 'selection', selop, items)
+
+    def selection(self):
+        """Returns the tuple of the selected items."""
+        return self._tk.splitlist(self._tk.call('exw', 'subcmd', self._widget, 'selection'))
+
+    def selection_add(self, *items):
+        """Adds the items in ITEMLIST to the selection."""
+        self._selection('add', items)
+
+    def selection_remove(self, *items):
+        """Removes the items in ITEMLIST from the selection."""
+        self._selection('remove', items)
+
+    def selection_set(self, *items):
+        """Sets the selection to the items in ITEMLIST."""
+        self._selection('set', items)
+
+    def selection_toggle(self, *items):
+        """Toggles the selection state of each item in ITEMLIST."""
+        self._selection('toggle', items)
+
 if __name__ == "__main__":
     import sys
     import re
