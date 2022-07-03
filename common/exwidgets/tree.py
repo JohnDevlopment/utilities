@@ -1,6 +1,6 @@
-from . import ExWidget, Pack, Grid, _val_or_dict
+from . import ExWidget, Pack, Grid
 from tkinter import ttk, _stringify
-from tkinter.ttk import _format_optdict
+from tkinter.ttk import _format_optdict, _val_or_dict
 from enum import Enum
 
 class Pattern(Enum):
@@ -155,7 +155,19 @@ class ExTree(ExWidget, Pack, Grid):
             res = self._tk.call('exw', 'subcmd', self._widget, 'insert', parent, index, *opts)
         return res
 
-    #defs
+    # defs
+
+    def item(self, item, option=None, **kw):
+        """Query or modify the options for the specified item.
+
+        If no options are given, a dict with options/values for the item
+        is returned. If option is specified then the value for that option
+        is returned. Otherwise, sets the options to the corresponding
+        values as given by kw."""
+        if option is not None:
+            kw[option] = None
+        return _val_or_dict(self._tk, kw, 'exw', 'subcmd',
+                            self._widget, 'item', item)
 
     def itemindex(self, index):
         """Finds and returns the item located at the specified index."""
