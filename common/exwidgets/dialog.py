@@ -48,7 +48,7 @@ class ExDialog(Toplevel):
 
         body = ttk.Frame(self)
         self.initial_focus = self.body(body)
-        body.pack(fill=BOTH, ipadx=5, ipady=5)
+        body.pack(fill=BOTH, ipadx=5, ipady=5, expand=True)
 
         self.buttonbox()
 
@@ -81,6 +81,8 @@ class ExDialog(Toplevel):
         Return widget that should have initial focus.
         This method should be overridden, and is called
         by the __init__() method.
+
+        MASTER is a ttk.Frame packed directly under the Toplevel.
         """
         pass
 
