@@ -15,7 +15,7 @@ class ExDialog(Toplevel):
 
     This class is intended as a base class for custom dialogs.
     """
-    def __init__(self, parent, title = None):
+    def __init__(self, parent, title=None):
         """Initialize a dialog.
 
         Arguments:
@@ -147,6 +147,35 @@ class ExDialog(Toplevel):
         Override this method to implement custom behavior.
         """
         pass
+
+class ExConfirmation(ExDialog):
+    """Confirmation dialog"""
+    def __init__(self, parent, text=None, *args, **kw):
+        """Initializes a confirmation dialog with the given parent PARENT.
+
+        TEXT is the dialog text to display.
+        """
+        self.text = text or ''
+        super().__init__(parent, *args, **kw)
+
+    def buttonbox(self):
+        box = ttk.Frame(self)
+
+        w = ttk.Button(box, text='OK', width=10, command=self.ok, default=ACTIVE)
+        w.pack(side=TOP, padx=5, pady=5)
+
+        self.bind("<Return>", self.ok)
+
+        box.pack(fill=BOTH)
+
+    def body(self, master):
+        body = ttk.Frame(master)
+        body.pack(fill=BOTH)
+
+        label = ttk.Label(body, text=self.text or '', justify=CENTER, anchor=N)
+        label.pack(fill=BOTH, side=TOP, anchor=N)
+
+        return label
 
 class QueryDialog(Dialog):
     def __init__(self, parent=None, title=None, prompt=None, text=None,
