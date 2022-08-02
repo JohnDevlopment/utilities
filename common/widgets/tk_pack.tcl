@@ -26,7 +26,7 @@ proc ::exWidgets::__pack_entry {pathname args} {
     namespace upvar [namespace current] packinfo($pathname) PackInfo
 
     ::pack $pathname {*}$args
-    ::pack $pathname.entry -fill x -expand 1 -side top -anchor n
+    ::pack $pathname.entry -fill x -expand 1 -side top -anchor n -ipadx 2 -padx "0 35"
 
     # Label has a value
     set label [dict get $PackInfo label]
@@ -36,7 +36,13 @@ proc ::exWidgets::__pack_entry {pathname args} {
 
     # Clear button is enabled
     if {[dict get $PackInfo clearbutton]} {
-        ::place $pathname.clear -in $pathname.entry -anchor ne -bordermode inside -relx 1 -rely 0 -width 30 -height 20
+	::place $pathname.clear -in $pathname.entry -anchor ne -bordermode outside -relx 1.1 -rely 0 -width 30 -height 20
+	after idle [subst {
+	    set font [ttk::style lookup TEntry -font]
+	    set w [font measure \$font -displayof $pathname.entry 0]
+	    ::place $pathname.clear -x \$w
+	    unset -nocomplain font w
+	}]
     }
 
     # Scrollbar is enabled
