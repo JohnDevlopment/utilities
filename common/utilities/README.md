@@ -1,7 +1,7 @@
 
 [//000000001]: # (utilities \- Tcl Utility Functions)
 [//000000002]: # (Generated from file '' by tcllib/doctools with format 'markdown')
-[//000000003]: # (Copyright &copy; John Russell 2021)
+[//000000003]: # (Copyright &copy; John Russell 2019\-2022)
 [//000000004]: # (utilities\(n\) 1\.1  "Tcl Utility Functions")
 
 # NAME
@@ -28,7 +28,7 @@ utilities \- Tcl Utility Functions
 
 # <a name='synopsis'></a>SYNOPSIS
 
-package require utilities ?1\.1\`?  
+package require utilities ?1\.2?  
 
 [assert *expression* ?*message*?](#1)  
 [bitset *intVar* *bit* *flag*](#2)  
@@ -173,5 +173,5 @@ can be used inside of __expr__\.
 
 # <a name='copyright'></a>COPYRIGHT
 
-Copyright &copy; John Russell 2021
+Copyright &copy; John Russell 2019\-2022
 

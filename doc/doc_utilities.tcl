@@ -1,5 +1,5 @@
-[vset version "1.1"]
-[vset pkgVer "1.1`"]
+[vset version "1.2"]
+[vset pkgVer "1.2"]
 [manpage_begin utilities n [vset version]]
 [require utilities [opt [vset pkgVer]]]
 [include copyright.tcl]
