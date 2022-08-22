@@ -5,7 +5,7 @@ Contains helper functions.
 import re
 from .text import ExText
 from .entry import ExEntry
-from .dialog import ask_string, ask_integer, ask_float
+from .dialog import ask_string, ask_integer, ask_float, ExConfirmation, ExYesno
 from tkinter import ttk, StringVar
 
 _help_re = re.compile('-[h?]|--help')
@@ -21,39 +21,64 @@ def _detect_help(args: list, cls: str) -> bool:
 
     return False
 
-def test_dialog(root, name: str):
-    root.update()
-    match name:
-        case 'getstring':
-            name = ask_string(
-                'Name',
-                'What Is Your Name?'
-            )
-            if name is None:
-                print('Okay, no-name')
-                return
-            print("Your name is", name)
-        case 'getfloat':
-            balance = ask_float(
-                'Balance',
-                'Current Balance'
-            )
-            if name is None:
-                print("No balance provided")
-                return
-            print("Current balance:", balance)
-        case 'getint':
-            pin = ask_integer(
-                'Nosy',
-                'Your Secret PIN',
-                text="Forgive me for being nosy, but what is your secret PIN number?",
-                minvalue=1234,
-                maxvalue=9999
-            )
-            if pin is None:
-                print('Well! Sorry for asking!')
-                return
-            print("I see. So your PIN number is '%s'. Thanks!" % pin)
+def test_dialog(root, opts):
+    def _action(action: str):
+        root.update()
+        match action:
+            case 'getstring':
+                name = ask_string(
+                    'Name',
+                    'What Is Your Name?'
+                )
+                if name is None or name == '':
+                    print('Okay, no-name')
+                    return
+                print("Your name is", name)
+            case 'getfloat':
+                balance = ask_float(
+                    'Balance',
+                    'Current Balance'
+                )
+                if balance is None:
+                    print("No balance provided")
+                    return
+                print("Current balance:", balance)
+            case 'getint':
+                pin = ask_integer(
+                    'Nosy',
+                    'Your Secret PIN',
+                    text="Forgive me for being nosy, but what is your secret PIN number?",
+                    minvalue=1234,
+                    maxvalue=9999
+                )
+                if pin is None:
+                    print('Well! Sorry for asking!')
+                    return
+                print("I see. So your PIN number is '%s'. Thanks!" % pin)
+            case 'confirm':
+                d = ExYesno(root, 'Do you want rule the world?', title='Confirmation')
+                print(d.result)
+                if not d.result:
+                    print("Awww, spoil sport!")
+                    return
+                name = ask_string(
+                    'Your Name',
+                    'Name Of Our New Ruler'
+                )
+                if name == '':
+                    print("You didn't provide a name!")
+                    return
+                print(f"Hail our new overlord, {name}!")
+
+    root.title('Dialog Test')
+    #root.geometry('100x133')
+    ttk.Button(root, text='Get String', width=10, command=lambda: _action('getstring')).pack()
+    ttk.Button(root, text='Get Integer', width=10, command=lambda: _action('getint')).pack()
+    ttk.Button(root, text='Get Float', width=10, command=lambda: _action('getfloat')).pack()
+    ttk.Button(root, text='Confirmation Dialog', width=30, command=lambda: _action('confirm')).pack()
+    root.mainloop()
+
+    
 
 def test_entry(root, opts):
     entry = ExEntry(root, opts)
