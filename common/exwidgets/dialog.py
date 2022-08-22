@@ -16,13 +16,17 @@ class ExDialog(Toplevel):
 
     This class is intended as a base class for custom dialogs.
     """
-    def __init__(self, parent, title=None):
+    def __init__(self, parent, title=None, *, type=None):
         """Initialize a dialog.
 
         Arguments:
             parent -- a parent window (the application window)
 
             title -- the dialog title
+
+            type -- type of the dialog: if None, defaults to
+                    ok/cancel style; else can be one of
+                    "abortretry" or "yesno"
 
         Attributes:
             result -- result of the dialog
@@ -46,6 +50,8 @@ class ExDialog(Toplevel):
 
         if title:
             self.title(title)
+
+        self.type = type or 'okcancel'
 
         _setup_dialog(self)
 
@@ -101,10 +107,21 @@ class ExDialog(Toplevel):
         box = ttk.Frame(self.frame)
         box.pack(fill=BOTH, expand=True)
 
-        w = ttk.Button(box, text='OK', width=10, command=self.ok, default=ACTIVE)
+        text = ('Ok', 'Cancel')
+        match self.type:
+            case 'okcancel':
+                pass
+            case 'abortretry':
+                text = ('Abort', 'Retry')
+            case 'yesno':
+                text = ('Yes', 'No')
+            case _:
+                raise ValueError(f"invalid dialog type '{self.type}'")
+
+        w = ttk.Button(box, text=text[0], width=10, command=self.ok, default=ACTIVE)
         w.pack(side=LEFT, padx=5, pady=5)
 
-        w = ttk.Button(box, text="Cancel", width=10, command=self.cancel)
+        w = ttk.Button(box, text=text[1], width=10, command=self.cancel)
         w.pack(side=LEFT, padx=5, pady=5)
 
         self.bind("<Return>", self.ok)
@@ -155,12 +172,36 @@ class ExDialog(Toplevel):
         """
         pass
 
-class ExConfirmation(ExDialog):
-    """Confirmation dialog.
+class ExYesno(ExDialog):
+    """Yes/no dialog.
 
     Use `self.result` to get the result of the dialog, True
     for ok or False for cancel.
     """
+    def __init__(self, parent, text=None, *args, **kw):
+        """Initializes the dialog with the given parent PARENT.
+
+        TEXT is the dialog text to display.
+        """
+        self.text = text or ''
+        self.result = False
+        super().__init__(parent, *args, type='yesno', **kw)
+
+    def body(self, master):
+        body = ttk.Frame(master)
+        body.pack(fill=BOTH)
+
+        label = ttk.Label(body, text=self.text or '', justify=CENTER, anchor=N)
+        label.pack(fill=BOTH, side=TOP, anchor=N)
+
+        return label
+
+    def ok(self, event=None):
+        self.result = True
+        super().ok(event)
+
+class ExConfirmation(ExDialog):
+    """Confirmation dialog."""
     def __init__(self, parent, text=None, *args, **kw):
         """Initializes a confirmation dialog with the given parent PARENT.
 
