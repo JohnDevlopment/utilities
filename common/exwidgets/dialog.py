@@ -1,9 +1,10 @@
 """Common dialog windows.
 
 Functions
-    ask_string() -- ask for a string of user input
+    ask_string()  -- ask for a string of user input
+    ask_float()   -- query the user for a floating point value
+    ask_integer() -- query the user for an integer number
 """
-from tkinter.simpledialog import Dialog
 from tkinter import ttk, Tk, messagebox, Toplevel, _get_temp_root
 from tkinter.simpledialog import (_setup_dialog, _place_window, _destroy_temp_root,
 _get_temp_root, _destroy_temp_root)
@@ -22,6 +23,11 @@ class ExDialog(Toplevel):
             parent -- a parent window (the application window)
 
             title -- the dialog title
+
+        Attributes:
+            result -- result of the dialog
+
+            frame -- a tkinter.ttk.Frame that holds all of the dialog's children
         """
         master = parent
         if master is None:
@@ -43,12 +49,13 @@ class ExDialog(Toplevel):
 
         _setup_dialog(self)
 
-        self.parent = parent
+        self.parent = master
         self.result = None
 
         body = ttk.Frame(self)
-        self.initial_focus = self.body(body)
         body.pack(fill=BOTH, ipadx=5, ipady=5, expand=True)
+        self.frame = body
+        self.initial_focus = self.body(body)
 
         self.buttonbox()
 
@@ -91,17 +98,17 @@ class ExDialog(Toplevel):
 
         Override if you do not want the standard buttons.
         """
-        box = ttk.Frame(self)
+        box = ttk.Frame(self.frame)
+        box.pack(fill=BOTH, expand=True)
 
         w = ttk.Button(box, text='OK', width=10, command=self.ok, default=ACTIVE)
         w.pack(side=LEFT, padx=5, pady=5)
+
         w = ttk.Button(box, text="Cancel", width=10, command=self.cancel)
         w.pack(side=LEFT, padx=5, pady=5)
 
         self.bind("<Return>", self.ok)
         self.bind("<Escape>", self.cancel)
-
-        box.pack(fill=BOTH)
 
     #
     # standard button semantics
@@ -149,7 +156,11 @@ class ExDialog(Toplevel):
         pass
 
 class ExConfirmation(ExDialog):
-    """Confirmation dialog"""
+    """Confirmation dialog.
+
+    Use `self.result` to get the result of the dialog, True
+    for ok or False for cancel.
+    """
     def __init__(self, parent, text=None, *args, **kw):
         """Initializes a confirmation dialog with the given parent PARENT.
 
@@ -159,14 +170,13 @@ class ExConfirmation(ExDialog):
         super().__init__(parent, *args, **kw)
 
     def buttonbox(self):
-        box = ttk.Frame(self)
+        box = ttk.Frame(self.frame)
+        box.pack(fill=BOTH)
 
         w = ttk.Button(box, text='OK', width=10, command=self.ok, default=ACTIVE)
         w.pack(side=TOP, padx=5, pady=5)
 
         self.bind("<Return>", self.ok)
-
-        box.pack(fill=BOTH)
 
     def body(self, master):
         body = ttk.Frame(master)
@@ -177,7 +187,7 @@ class ExConfirmation(ExDialog):
 
         return label
 
-class QueryDialog(Dialog):
+class QueryDialog(ExDialog):
     def __init__(self, parent=None, title=None, prompt=None, text=None,
                  initialval=None, minvalue=None, maxvalue=None):
         """Initialize a dialog for querying user input.
@@ -203,11 +213,11 @@ class QueryDialog(Dialog):
         self.initialval = initialval
         self.minvalue = minvalue
         self.maxvalue = maxvalue
-        super().__init__(parent, title)
+        ExDialog.__init__(self, parent, title)
 
     def body(self, master):
-        body = ttk.Frame(self)
-        body.pack(fill='both')
+        body = ttk.Frame(master)
+        body.pack(fill=BOTH, expand=True)
 
         if self.text is not None:
             label = ttk.Label(body, text=self.text, justify=LEFT)
@@ -262,7 +272,7 @@ class _QueryFloat(QueryDialog):
     errormessage = "Not an integer."
 
     def __init__(self, title: str, prompt: str, **kw):
-        super().__init__(title=title, prompt=prompt, **kw)
+        QueryDialog.__init__(self, title=title, prompt=prompt, **kw)
 
     def get_result(self):
         return self.getdouble(self.entry.subcmd('get'))
@@ -271,14 +281,14 @@ class _QueryInteger(QueryDialog):
     errormessage = "Not an integer."
 
     def __init__(self, title: str, prompt: str, **kw):
-        super().__init__(title=title, prompt=prompt, **kw)
+        QueryDialog.__init__(self, title=title, prompt=prompt, **kw)
 
     def get_result(self):
         return self.getint(self.entry.subcmd('get'))
 
 class _QueryString(QueryDialog):
     def __init__(self, title: str, prompt: str, **kw):
-        super().__init__(title=title, prompt=prompt, **kw)
+        QueryDialog.__init__(self, title=title, prompt=prompt, **kw)
 
     def get_result(self):
         return self.entry.subcmd('get')
@@ -288,9 +298,9 @@ def ask_float(title: str, prompt: str, **kw):
 
     Arguments:
         title = the dialog title
-    
+
         prompt -- the label text
-    
+
         **kw = see QueryDialog class
     """
     d = _QueryFloat(title, prompt, **kw)
@@ -301,9 +311,9 @@ def ask_integer(title: str, prompt: str, **kw):
 
     Arguments:
         title = the dialog title
-    
+
         prompt -- the label text
-    
+
         **kw = see QueryDialog class
     """
     d = _QueryInteger(title, prompt, **kw)
@@ -314,20 +324,34 @@ def ask_string(title: str, prompt: str, **kw):
 
     Arguments:
         title = the dialog title
-    
+
         prompt -- the label text
-    
+
         **kw = see QueryDialog class
     """
     d = _QueryString(title, prompt, **kw)
     return d.result
 
 if __name__ == '__main__':
-    from ._test import test_dialog
-    root = Tk()
-    root.title('Dialog Test')
-    root.geometry('100x100')
-    ttk.Button(root, text='Get String', width=10, command=lambda: test_dialog(root, 'getstring')).pack()
-    ttk.Button(root, text='Get Integer', width=10, command=lambda: test_dialog(root, 'getint')).pack()
-    ttk.Button(root, text='Get Float', width=10, command=lambda: test_dialog(root, 'getfloat')).pack()
-    root.mainloop()
+    import sys
+    from ._test import _detect_help, test_dialog
+    from tkinter import Tk
+
+    print("Testing dialogs...")
+    args = sys.argv[1:]
+    opts = {}
+
+    # Detect -h|-?|--help
+    if _detect_help(args, 'ExEntry'):
+        sys.exit()
+
+    if (len(args) % 1):
+        raise ValueError("Must be even number of arguments")
+
+    i = 0
+    while i < len(args):
+        (opt, arg) = args[i:i+2]
+        opts[opt] = arg
+        i += 2
+
+    test_dialog(Tk(), opts)
