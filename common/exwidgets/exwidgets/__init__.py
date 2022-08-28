@@ -16,6 +16,8 @@ packageLoaded = False
 
 __all__ = ['ExWidget', 'Pack', 'Grid', 'TkBusyCommand']
 
+__version__ = '1.0-alpha'
+
 class Pack:
     """Geometry manager pack.
 
