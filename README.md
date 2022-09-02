@@ -58,4 +58,4 @@ package require tk_widgets
 Please refer to the [wiki] for detailed documentation of each library.
 
 [wiki]:      wiki
-[releases]:  releases
+[releases]:  https://github.com/JohnDevlopment/utilities/releases
