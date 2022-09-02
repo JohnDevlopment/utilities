@@ -2,7 +2,7 @@
 [//000000001]: # (utilities \- Tcl Utility Functions)
 [//000000002]: # (Generated from file '' by tcllib/doctools with format 'markdown')
 [//000000003]: # (Copyright &copy; John Russell 2019\-2022)
-[//000000004]: # (utilities\(n\) 1\.1  "Tcl Utility Functions")
+[//000000004]: # (utilities\(n\) 1\.2  "Tcl Utility Functions")
 
 # NAME
 
